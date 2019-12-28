@@ -1,5 +1,7 @@
 #include "main.h"
 #include "opcontrolFuncs.h"
+#include "debugScreen.h"
+#include "deviceConfig.h"
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -15,12 +17,15 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+  pros::delay(10);
+  DebugScreen debugDisplay(lv_scr_act(), chassisControl);
   while (true) {
 		// Abstracted into functions
 		chassisOpcontrol();
 		tilterOpcontrol();
 		intakeOpcontrol();
 
+    debugDisplay.updateOdom();
 		pros::delay(20);
   }
 }
