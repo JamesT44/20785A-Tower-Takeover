@@ -26,7 +26,7 @@ std::shared_ptr<okapi::OdomChassisController> chassisControl = okapi::ChassisCon
 		.withDimensions(okapi::AbstractMotor::gearset::green, chassisScale)
 		.withSensors(LEnc, REnc, MEnc)
 		.withMaxVelocity(70)
-		.withOdometry(odomScale)
+		.withOdometry(odomScale, okapi::StateMode::CARTESIAN)
 		.buildOdometry();
 
 /**
