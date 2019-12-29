@@ -1,18 +1,16 @@
-#include "main.h"
 #include "debugScreen.h"
 #include "deviceConfig.h"
+#include "main.h"
 
 LV_IMG_DECLARE(field_img);
 
-DebugScreen::DebugScreen(
-  lv_obj_t* parent,
-  const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
-  : tabview(lv_tabview_create(parent, NULL)),
-    robotOdomController(robotOdom) {
+DebugScreen::DebugScreen(lv_obj_t *parent,
+                         const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
+  : tabview(lv_tabview_create(parent, NULL)), robotOdomController(robotOdom) {
 
   lv_tabview_set_btns_hidden(tabview, true);
-  lv_obj_t* odomTab = lv_tabview_add_tab(tabview, "Odometry");
-  lv_obj_t* motorTab = lv_tabview_add_tab(tabview, "Motors");
+  lv_obj_t *odomTab = lv_tabview_add_tab(tabview, "Odometry");
+  lv_obj_t *motorTab = lv_tabview_add_tab(tabview, "Motors");
 
   // lv_obj_t* odomLeftBar = lv_cont_create(odomTab, NULL);
   // lv_obj_set_pos(odomLeftBar, 5, -25);
@@ -21,12 +19,12 @@ DebugScreen::DebugScreen(
 
   odomStatusLabel = lv_label_create(odomTab, NULL);
 
-  lv_obj_t* odomBtnm = lv_btnm_create(odomTab, NULL);
+  lv_obj_t *odomBtnm = lv_btnm_create(odomTab, NULL);
   lv_btnm_set_map(odomBtnm, odomBtnmMap);
   lv_obj_set_size(odomBtnm, 180, 80);
   lv_btnm_set_action(odomBtnm, odomBtnCallback);
 
-  lv_obj_t* fieldImg = lv_img_create(odomTab, NULL);
+  lv_obj_t *fieldImg = lv_img_create(odomTab, NULL);
   lv_img_set_src(fieldImg, &field_img);
 
   robotLine = lv_line_create(fieldImg, NULL);
@@ -54,51 +52,43 @@ void DebugScreen::updateOdom() {
   double y = state.y.convert(okapi::foot);
   double theta = state.theta.convert(okapi::radian);
 
-  std::string statusString = "L: " + std::to_string(encValues[0]) +
-    "\nR: " + std::to_string(encValues[1]) +
-    "\nM: " + std::to_string(encValues[2]) +
-    "\nX: " + std::to_string(x) +
-    "\nY: " + std::to_string(y) +
-    "\nTheta: " + std::to_string(okapi::radianToDegree * theta);
+  std::string statusString =
+    "L: " + std::to_string(encValues[0]) + "\nR: " + std::to_string(encValues[1]) +
+    "\nM: " + std::to_string(encValues[2]) + "\nX: " + std::to_string(x) +
+    "\nY: " + std::to_string(y) + "\nTheta: " + std::to_string(okapi::radianToDegree * theta);
   lv_label_set_text(odomStatusLabel, statusString.c_str());
 
-  robotPoints[0] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[0] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x += centreDist * sin(theta);
   y += centreDist * cos(theta);
-  robotPoints[1] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[1] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x -= robotWidth * cos(theta) / 2;
   y += robotWidth * sin(theta) / 2;
-  robotPoints[2] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[2] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x -= robotLength * sin(theta);
   y -= robotLength * cos(theta);
-  robotPoints[3] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[3] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x += robotWidth * cos(theta);
   y -= robotWidth * sin(theta);
-  robotPoints[4] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[4] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x += robotLength * sin(theta);
   y += robotLength * cos(theta);
-  robotPoints[5] = {(short)(x / 12.0 * fieldImgSize),
-                    (short)((1.0 - y / 12.0) * fieldImgSize)};
+  robotPoints[5] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   robotPoints[6] = robotPoints[1];
   lv_line_set_points(robotLine, robotPoints.data(), robotPoints.size());
 }
 
 std::shared_ptr<okapi::OdomChassisController> DebugScreen::getRobotOdomController() {
-    return robotOdomController;
+  return robotOdomController;
 }
 
-lv_res_t odomBtnCallback(lv_obj_t* btnm, const char* text) {
+lv_res_t odomBtnCallback(lv_obj_t *btnm, const char *text) {
   okapi::OdomState state = chassisControl->getState();
 
   if (strcmp(text, "Reset") == 0) {

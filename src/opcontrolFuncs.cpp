@@ -1,6 +1,6 @@
 #include "opcontrolFuncs.h"
-#include "deviceConfig.h"
 #include "basicFuncs.h"
+#include "deviceConfig.h"
 
 // Named buttons
 okapi::ControllerButton forwardBtn(okapi::ControllerDigital::up);
@@ -26,7 +26,7 @@ void chassisOpcontrol() {
     chassisControl->stop();
   } else {
     setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
-              mainController.getAnalog(okapi::ControllerAnalog::rightY));
+               mainController.getAnalog(okapi::ControllerAnalog::rightY));
   }
 }
 
