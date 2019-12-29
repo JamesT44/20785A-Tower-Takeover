@@ -12,11 +12,6 @@ DebugScreen::DebugScreen(lv_obj_t *parent,
   lv_obj_t *odomTab = lv_tabview_add_tab(tabview, "Odometry");
   lv_obj_t *motorTab = lv_tabview_add_tab(tabview, "Motors");
 
-  // lv_obj_t* odomLeftBar = lv_cont_create(odomTab, NULL);
-  // lv_obj_set_pos(odomLeftBar, 5, -25);
-  // lv_cont_set_layout(odomLeftBar, LV_LAYOUT_COL_L);
-  // lv_cont_set_fit(odomLeftBar, true, true);
-
   odomStatusLabel = lv_label_create(odomTab, NULL);
 
   lv_obj_t *odomBtnm = lv_btnm_create(odomTab, NULL);
