@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main.h"
+#include "debugScreen.h"
 
 // Forward declarations
 extern okapi::Controller mainController;
@@ -10,3 +11,4 @@ extern okapi::MotorGroup chassisLMtrs, chassisRMtrs, intakeMtrs;
 extern okapi::ADIEncoder LEnc, REnc, MEnc;
 extern okapi::ChassisScales chassisScale, odomScale;
 extern std::shared_ptr<okapi::OdomChassisController> chassisControl;
+extern DebugScreen debugDisplay;

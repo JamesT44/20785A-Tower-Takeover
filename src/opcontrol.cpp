@@ -1,6 +1,7 @@
 #include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
+#include "okapi/api/util/logging.hpp"
 #include "opcontrolFuncs.h"
 
 /**
@@ -17,8 +18,7 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  pros::delay(10);
-  DebugScreen debugDisplay(lv_scr_act(), chassisControl);
+  int i = 0;
   while (true) {
     // Abstracted into functions
     chassisOpcontrol();
@@ -26,6 +26,11 @@ void opcontrol() {
     intakeOpcontrol();
 
     debugDisplay.updateOdom();
+
+    if (i++ == 50) {
+      std::cout << chassisControl->getState().str() << std::endl;
+      i = 0;
+    }
     pros::delay(20);
   }
 }

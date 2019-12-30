@@ -1,3 +1,4 @@
+#include "debugScreen.h"
 #include "main.h"
 
 okapi::Controller mainController(okapi::ControllerId::master);
@@ -50,6 +51,8 @@ std::shared_ptr<okapi::OdomChassisController> chassisControl =
     .withMaxVelocity(70)
     .withOdometry(odomScale, okapi::StateMode::CARTESIAN)
     .buildOdometry();
+
+DebugScreen debugDisplay(lv_scr_act(), chassisControl);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
