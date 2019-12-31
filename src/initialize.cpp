@@ -1,47 +1,39 @@
+#include "customOdometry.h"
 #include "debugScreen.h"
 #include "main.h"
 
 okapi::Controller mainController(okapi::ControllerId::master);
 
-okapi::Motor chassisFLMtr = okapi::Motor(1,
-                                         false,
-                                         okapi::AbstractMotor::gearset::green,
-                                         okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor chassisFRMtr = okapi::Motor(3,
-                                         true,
-                                         okapi::AbstractMotor::gearset::green,
-                                         okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor chassisBLMtr = okapi::Motor(2,
-                                         false,
-                                         okapi::AbstractMotor::gearset::green,
-                                         okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor chassisBRMtr = okapi::Motor(4,
-                                         true,
-                                         okapi::AbstractMotor::gearset::green,
-                                         okapi::AbstractMotor::encoderUnits::counts);
 okapi::Motor tilterMtr = okapi::Motor(5,
                                       false,
                                       okapi::AbstractMotor::gearset::red,
                                       okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor intakeLMtr = okapi::Motor(6,
-                                       false,
-                                       okapi::AbstractMotor::gearset::green,
-                                       okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor intakeRMtr = okapi::Motor(7,
-                                       true,
-                                       okapi::AbstractMotor::gearset::green,
-                                       okapi::AbstractMotor::encoderUnits::counts);
 
-okapi::MotorGroup chassisLMtrs = okapi::MotorGroup({chassisFLMtr, chassisBLMtr});
-okapi::MotorGroup chassisRMtrs = okapi::MotorGroup({chassisFRMtr, chassisBRMtr});
-okapi::MotorGroup intakeMtrs = okapi::MotorGroup({intakeLMtr, intakeRMtr});
+std::shared_ptr<okapi::MotorGroup> chassisLMtrs =
+  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({1, 2}));
+std::shared_ptr<okapi::MotorGroup> chassisRMtrs =
+  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({-3, -4}));
+std::shared_ptr<okapi::MotorGroup> intakeMtrs =
+  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({6, -7}));
 
-okapi::ADIEncoder LEnc = okapi::ADIEncoder(7, 8);
-okapi::ADIEncoder REnc = okapi::ADIEncoder(1, 2, true);
-okapi::ADIEncoder MEnc = okapi::ADIEncoder(3, 4);
+std::shared_ptr<okapi::ADIEncoder> LEnc = std::make_shared<okapi::ADIEncoder>(7, 8);
+std::shared_ptr<okapi::ADIEncoder> REnc = std::make_shared<okapi::ADIEncoder>(1, 2, true);
+std::shared_ptr<okapi::ADIEncoder> MEnc = std::make_shared<okapi::ADIEncoder>(3, 4);
 
 okapi::ChassisScales chassisScale = okapi::ChassisScales({4.157_in, 11.15_in}, 900);
 okapi::ChassisScales odomScale = okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in}, 360);
+
+std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
+  std::make_shared<okapi::ThreeEncoderSkidSteerModel>(chassisLMtrs,
+                                                      chassisRMtrs,
+                                                      LEnc,
+                                                      REnc,
+                                                      MEnc,
+                                                      200,
+                                                      12000);
+
+std::unique_ptr<CustomOdometry> robotOdometry =
+  std::make_unique<CustomOdometry>(okapi::TimeUtilFactory().create(), robotModel, odomScale);
 
 std::shared_ptr<okapi::OdomChassisController> chassisControl =
   okapi::ChassisControllerBuilder()
@@ -49,7 +41,7 @@ std::shared_ptr<okapi::OdomChassisController> chassisControl =
     .withDimensions(okapi::AbstractMotor::gearset::green, chassisScale)
     .withSensors(LEnc, REnc, MEnc)
     .withMaxVelocity(70)
-    .withOdometry(odomScale, okapi::StateMode::CARTESIAN)
+    .withOdometry(std::move(robotOdometry), okapi::StateMode::CARTESIAN)
     .buildOdometry();
 
 DebugScreen debugDisplay(lv_scr_act(), chassisControl);

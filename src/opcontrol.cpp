@@ -31,6 +31,6 @@ void opcontrol() {
       std::cout << chassisControl->getState().str() << std::endl;
       i = 0;
     }
-    pros::delay(20);
+    pros::delay(10);
   }
 }

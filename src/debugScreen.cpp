@@ -6,7 +6,7 @@ LV_IMG_DECLARE(field_img);
 
 DebugScreen::DebugScreen(lv_obj_t *parent,
                          const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
-  : tabview(lv_tabview_create(parent, NULL)), robotOdomController(robotOdom) {
+  : tabview(lv_tabview_create(parent, NULL)), robotController(robotOdom) {
 
   lv_tabview_set_btns_hidden(tabview, true);
   lv_obj_t *odomTab = lv_tabview_add_tab(tabview, "Odometry");
@@ -40,8 +40,9 @@ DebugScreen::~DebugScreen() {
 }
 
 void DebugScreen::updateOdom() {
-  std::valarray<std::int32_t> encValues = robotOdomController->getModel()->getSensorVals();
-  okapi::OdomState state = robotOdomController->getState();
+
+  std::valarray<std::int32_t> encValues = robotController->getModel()->getSensorVals();
+  okapi::OdomState state = robotController->getState();
 
   double x = state.x.convert(okapi::foot);
   double y = state.y.convert(okapi::foot);
@@ -52,7 +53,7 @@ void DebugScreen::updateOdom() {
     "\nM: " + std::to_string(encValues[2]) + "\nX: " + std::to_string(x) +
     "\nY: " + std::to_string(y) + "\nTheta: " + std::to_string(okapi::radianToDegree * theta);
   lv_label_set_text(odomStatusLabel, statusString.c_str());
-
+  lv_obj_invalidate(odomStatusLabel);
   robotPoints[0] = {(short)(x / 12.0 * fieldImgSize), (short)((1.0 - y / 12.0) * fieldImgSize)};
 
   x += centreDist * sin(theta);
@@ -77,19 +78,19 @@ void DebugScreen::updateOdom() {
 
   robotPoints[6] = robotPoints[1];
   lv_line_set_points(robotLine, robotPoints.data(), robotPoints.size());
+  // lv_obj_invalidate(robotLine);
 }
 
-std::shared_ptr<okapi::OdomChassisController> DebugScreen::getRobotOdomController() {
-  return robotOdomController;
+std::shared_ptr<okapi::OdomChassisController> DebugScreen::getRobotController() {
+  return robotController;
 }
 
 lv_res_t odomBtnCallback(lv_obj_t *btnm, const char *text) {
   okapi::OdomState state = chassisControl->getState();
 
   if (strcmp(text, "Reset") == 0) {
-    chassisControl->getModel()->resetSensors();
+    robotModel->resetSensors();
     pros::delay(20);
-
     chassisControl->setState({0_ft, 0_ft, 0_deg});
   } else if (strcmp(text, "X+") == 0) {
     state.x += 2_ft;

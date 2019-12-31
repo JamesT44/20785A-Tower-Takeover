@@ -1,5 +1,6 @@
 #pragma once
 
+#include "customOdometry.h"
 #include "main.h"
 
 static const char *odomBtnmMap[] = {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
@@ -16,10 +17,10 @@ class DebugScreen {
   ~DebugScreen();
 
   void updateOdom();
-  std::shared_ptr<okapi::OdomChassisController> getRobotOdomController();
+  std::shared_ptr<okapi::OdomChassisController> getRobotController();
 
   private:
-  std::shared_ptr<okapi::OdomChassisController> robotOdomController{nullptr};
+  std::shared_ptr<okapi::OdomChassisController> robotController{nullptr};
   lv_obj_t *tabview;
   lv_obj_t *odomStatusLabel;
   lv_obj_t *robotLine;

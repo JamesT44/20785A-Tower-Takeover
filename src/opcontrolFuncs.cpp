@@ -14,20 +14,20 @@ okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 
 void chassisOpcontrol() {
-  if (forwardBtn.changedToReleased()) {
-    chassisControl->moveDistance(8_ft);
-  } else if (backwardBtn.changedToReleased()) {
-    chassisControl->moveDistance(-8_ft);
-  } else if (turnLBtn.changedToReleased()) {
-    chassisControl->turnAngle(-1440_deg);
-    chassisControl->stop();
-  } else if (turnRBtn.changedToReleased()) {
-    chassisControl->turnAngle(1440_deg);
-    chassisControl->stop();
-  } else {
-    setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
-               mainController.getAnalog(okapi::ControllerAnalog::rightY));
-  }
+  // if (forwardBtn.changedToReleased()) {
+  //   chassisControl->moveDistance(8_ft);
+  // } else if (backwardBtn.changedToReleased()) {
+  //   chassisControl->moveDistance(-8_ft);
+  // } else if (turnLBtn.changedToReleased()) {
+  //   chassisControl->turnAngle(-1440_deg);
+  //   chassisControl->stop();
+  // } else if (turnRBtn.changedToReleased()) {
+  //   chassisControl->turnAngle(1440_deg);
+  //   chassisControl->stop();
+  // } else {
+  setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
+             mainController.getAnalog(okapi::ControllerAnalog::rightY));
+  // }
 }
 
 void tilterOpcontrol() {
