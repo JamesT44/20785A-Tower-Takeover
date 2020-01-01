@@ -1,8 +1,8 @@
 #include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
-#include "okapi/api/util/logging.hpp"
 #include "opcontrolFuncs.h"
+#include "point2D.h"
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -18,7 +18,7 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  int i = 0;
+  // int i = 0;
   while (true) {
     // Abstracted into functions
     chassisOpcontrol();
@@ -27,10 +27,10 @@ void opcontrol() {
 
     debugDisplay.updateOdom();
 
-    if (i++ == 50) {
-      std::cout << chassisControl->getState().str() << std::endl;
-      i = 0;
-    }
+    // if (i++ == 50) {
+    //   std::cout << chassisControl->getState().str() << std::endl;
+    //   i = 0;
+    // }
     pros::delay(10);
   }
 }
