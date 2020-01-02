@@ -25,4 +25,7 @@ class Point2D {
 
   static okapi::QLength dist(const Point2D &lhs, const Point2D &rhs);
   okapi::QLength dist(const Point2D &point);
+
+  static okapi::QLength magnitude(const Point2D &point);
+  okapi::QLength magnitude();
 };

@@ -11,9 +11,11 @@ okapi::QLength &Point2D::operator[](size_t index) {
   case 0:
     return x;
     break;
+
   case 1:
     return y;
     break;
+
   default:
     throw std::runtime_error("Vector::at():: \"" + std::to_string(index) + "\" is invalid index");
     break;
@@ -54,4 +56,12 @@ okapi::QLength Point2D::dist(const Point2D &lhs, const Point2D &rhs) {
 
 okapi::QLength Point2D::dist(const Point2D &point) {
   return dist(*this, point);
+}
+
+okapi::QLength Point2D::magnitude(const Point2D &point) {
+  return (point.x * point.x + point.y * point.y).sqrt();
+}
+
+okapi::QLength Point2D::magnitude() {
+  return magnitude(*this);
 }
