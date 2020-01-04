@@ -1,4 +1,5 @@
 #include "trajectory2D.h"
+#include <fstream>
 
 Trajectory2D::Trajectory2D(const std::vector<Point2D> &path) : Path2D{path} {
 }
@@ -53,6 +54,67 @@ Trajectory2D &Trajectory2D::withSmoothening(double weight, int iterations) {
   return *this;
 }
 
+Trajectory2D::SDCardRes Trajectory2D::saveToSD(const std::string &identifier) {
+  if (!SDCardInserted()) {
+    return Trajectory2D::SDCardRes::noSDCard;
+  }
+
+  std::ofstream f("/usd/paths/" + identifier + ".csv");
+  if (!f.is_open()) {
+    return Trajectory2D::SDCardRes::cannotOpenFile;
+  }
+
+  for (size_t i = 0; i < points.size(); i++) {
+    f << points[i]->x.convert(okapi::meter) << "," << points[i]->y.convert(okapi::meter) << ","
+      << curvatures[i].convert(okapi::mcrvt) << "," << velocities[i].convert(okapi::mps) << "\n";
+  }
+  f.close();
+
+  return Trajectory2D::SDCardRes::success;
+}
+
+Trajectory2D::SDCardRes Trajectory2D::loadFromSD(const std::string &identifier) {
+  if (!SDCardInserted()) {
+    return Trajectory2D::SDCardRes::noSDCard;
+  }
+
+  std::ifstream f("/usd/paths/" + identifier + ".csv");
+  if (!f.is_open()) {
+    return Trajectory2D::SDCardRes::cannotOpenFile;
+  }
+
+  std::string line, part;
+  std::vector<std::string> parts;
+  double x, y, curvature, velocity;
+  while (!f.eof()) {
+    getline(f, line);
+    std::stringstream ss(line);
+
+    while (getline(ss, part, ',')) {
+      parts.emplace_back(part);
+    }
+
+    if (parts.size() == 0) {
+      continue;
+    }
+
+    if (parts.size() != 4) {
+      std::cout << parts.size() << std::endl;
+      return Trajectory2D::SDCardRes::invalidDataFormat;
+    }
+
+    points.emplace_back(std::make_shared<Point2D>(std::stod(parts[0]) * okapi::meter,
+                                                  std::stod(parts[1]) * okapi::meter));
+    curvatures.emplace_back(std::stod(parts[2]) * okapi::mcrvt);
+    velocities.emplace_back(std::stod(parts[3]) * okapi::mps);
+
+    parts.clear();
+  }
+  f.close();
+
+  return Trajectory2D::SDCardRes::success;
+}
+
 void Trajectory2D::setCurvatures() {
   curvatures.reserve(points.size());
 
@@ -89,4 +151,10 @@ void Trajectory2D::setVelocities(const okapi::QSpeed &maxVel,
 
     velocities[i] = std::min(std::min(targetVel, decelLimited), maxVel);
   }
+}
+
+bool Trajectory2D::SDCardInserted() {
+  std::ofstream f("/usd/sdcard_check");
+  f.close();
+  return bool(f);
 }
