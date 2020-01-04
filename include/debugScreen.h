@@ -19,7 +19,7 @@ class DebugScreen {
   void updateOdom();
   std::shared_ptr<okapi::OdomChassisController> getRobotController();
 
-  private:
+  protected:
   std::shared_ptr<okapi::OdomChassisController> robotController{nullptr};
   lv_obj_t *tabview;
   lv_obj_t *odomStatusLabel;

@@ -20,8 +20,10 @@ std::shared_ptr<okapi::ADIEncoder> LEnc = std::make_shared<okapi::ADIEncoder>(7,
 std::shared_ptr<okapi::ADIEncoder> REnc = std::make_shared<okapi::ADIEncoder>(1, 2, true);
 std::shared_ptr<okapi::ADIEncoder> MEnc = std::make_shared<okapi::ADIEncoder>(3, 4);
 
-okapi::ChassisScales chassisScale = okapi::ChassisScales({4.157_in, 11.15_in}, 900);
-okapi::ChassisScales odomScale = okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in}, 360);
+okapi::ChassisScales chassisScale =
+  okapi::ChassisScales({4.157_in, 11.15_in}, okapi::imev5GreenTPR);
+okapi::ChassisScales odomScale =
+  okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in}, okapi::quadEncoderTPR);
 
 std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
   std::make_shared<okapi::ThreeEncoderSkidSteerModel>(chassisLMtrs,

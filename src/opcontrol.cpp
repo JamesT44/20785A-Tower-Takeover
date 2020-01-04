@@ -1,8 +1,10 @@
 #include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
-#include "okapi/api/util/logging.hpp"
 #include "opcontrolFuncs.h"
+#include "path2D.h"
+#include "trajectory2D.h"
+#include <fstream>
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -18,7 +20,28 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  int i = 0;
+
+  // auto start = pros::millis();
+  // auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 2_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}, {2_ft, 2_ft}})
+  //               .withInterpolation(1_cm)
+  //               .withSmoothening(0.9, 1000)
+  //               .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
+  // std::cout << pros::millis() - start << std::endl;
+
+  // auto points = path.getPoints();
+  // auto curvatures = path.getCurvatures();
+  // auto velocities = path.getVelocities();
+  // std::ofstream file;
+  // file.open("/usd/path.txt");
+  // for (size_t i = 0; i < points.size(); i++) {
+  //   file << points[i]->x.convert(okapi::meter) << "," << points[i]->y.convert(okapi::meter) <<
+  //   ","
+  //        << curvatures[i].convert(okapi::mcrvt) << "," << velocities[i].convert(okapi::mps) <<
+  //        "\n";
+  // }
+  // file.close();
+
+  // int i = 0;
   while (true) {
     // Abstracted into functions
     chassisOpcontrol();
@@ -27,10 +50,10 @@ void opcontrol() {
 
     debugDisplay.updateOdom();
 
-    if (i++ == 50) {
-      std::cout << chassisControl->getState().str() << std::endl;
-      i = 0;
-    }
+    // if (i++ == 50) {
+    //   std::cout << chassisControl->getState().str() << std::endl;
+    //   i = 0;
+    // }
     pros::delay(10);
   }
 }
