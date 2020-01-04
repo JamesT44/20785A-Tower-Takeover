@@ -14,21 +14,22 @@ Path2D::Path2D(std::vector<Point2D> &&path) {
   });
 }
 
-std::vector<std::shared_ptr<Point2D>> &Path2D::getVector() {
+std::vector<std::shared_ptr<Point2D>> &Path2D::getPoints() {
   return points;
 }
 
 Path2D Path2D::copy() const {
   Path2D temp;
-  temp.getVector().reserve(points.size());
+  temp.getPoints().reserve(points.size());
   for (auto &&point : points) {
-    temp.getVector().emplace_back(std::make_shared<Point2D>(*point));
+    temp.getPoints().emplace_back(std::make_shared<Point2D>(*point));
   }
   return temp;
 }
 
-Path2D &Path2D::interpolate(const okapi::QLength &resolution) {
+void Path2D::interpolate(const okapi::QLength &resolution) {
   std::vector<std::shared_ptr<Point2D>> temp;
+  temp.reserve(points.size());
 
   for (size_t i = 0; i < points.size() - 1; i++) {
     Point2D &start = *points[i];
@@ -49,27 +50,30 @@ Path2D &Path2D::interpolate(const okapi::QLength &resolution) {
   }
 
   points = std::move(temp);
-  return *this;
 }
 
-Path2D &Path2D::smoothen(double weight, const okapi::QLength &tolerance) {
-  Path2D temp = copy();
+void Path2D::smoothen(double weight, int iterations) {
+
   double smoothWeight = 1.0 - weight;
-  auto change = tolerance;
-  while (change >= tolerance) {
-    change = 0.0_m;
+  for (int k = 0; k < iterations; k++) {
     for (size_t i = 1; i < points.size() - 1; i++) {
       for (size_t j = 0; j < 2; j++) {
-        okapi::QLength aux = (*temp.getVector()[i])[j];
+        okapi::QLength aux = (*points[i])[j];
         okapi::QLength dataFac = weight * ((*points[i])[j] - aux);
-        okapi::QLength smoothFac = smoothWeight * ((*temp.getVector()[i - 1])[j] +
-                                                   (*temp.getVector()[i + 1])[j] - (2.0 * aux));
-        (*temp.getVector()[i])[j] += dataFac + smoothFac;
-        change = (aux - (*temp.getVector()[i])[j]).abs();
+        okapi::QLength smoothFac =
+          smoothWeight * ((*points[i - 1])[j] + (*points[i + 1])[j] - (2.0 * aux));
+        (*points[i])[j] += dataFac + smoothFac;
       }
     }
   }
+}
 
-  points = std::move(temp.getVector());
+Path2D &Path2D::withInterpolation(const okapi::QLength &resolution) {
+  interpolate(resolution);
+  return *this;
+}
+
+Path2D &Path2D::withSmoothening(double weight, int iterations) {
+  smoothen(weight, iterations);
   return *this;
 }

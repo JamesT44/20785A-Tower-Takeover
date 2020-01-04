@@ -1,4 +1,5 @@
 #pragma once
+
 #include "point2D.h"
 
 class Path2D {
@@ -15,12 +16,15 @@ class Path2D {
   Path2D &operator=(const Path2D &path) = default;
   Path2D &operator=(Path2D &&path) = default;
 
-  std::vector<std::shared_ptr<Point2D>> &getVector();
+  std::vector<std::shared_ptr<Point2D>> &getPoints();
 
   Path2D copy() const;
 
-  Path2D &interpolate(const okapi::QLength &resolution);
-  Path2D &smoothen(double weight, const okapi::QLength &tolerance);
+  void interpolate(const okapi::QLength &resolution);
+  void smoothen(double weight, int iterations);
+
+  Path2D &withInterpolation(const okapi::QLength &resolution);
+  Path2D &withSmoothening(double weight, int iterations);
 
   protected:
   std::vector<std::shared_ptr<Point2D>> points;
