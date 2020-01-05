@@ -2,7 +2,7 @@
 #include "deviceConfig.h"
 #include "main.h"
 #include "opcontrolFuncs.h"
-#include "path2D.h"
+#include "purePursuit.h"
 #include "trajectory2D.h"
 #include <fstream>
 
@@ -20,12 +20,15 @@
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  // auto start = pros::millis();
-  // auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 2_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}, {2_ft,
-  // 2_ft}})
-  //               .withInterpolation(1_cm)
-  //               .withSmoothening(0.9, 1000)
-  //               .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
+  auto start = pros::millis();
+  pros::delay(500);
+  auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 4_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}})
+                .withInterpolation(1_cm)
+                .withSmoothening(0.9, 1000)
+                .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
+
+  auto pursuit = PurePursuit(chassisControl, 1.1_ft);
+  auto pursuitTestBtn = okapi::ControllerButton(okapi::ControllerDigital::A);
 
   // auto path = Trajectory2D();
   // auto res = path.loadFromSD("test");
@@ -42,6 +45,10 @@ void opcontrol() {
 
     debugDisplay.updateOdom();
 
+    if (pursuitTestBtn.changedToReleased()) {
+      chassisControl->setState({0_ft, 0_ft, 0_deg});
+      pursuit.executeTrajectory(path, 1.1_mps2);
+    }
     // if (i++ == 50) {
     //   std::cout << chassisControl->getState().str() << std::endl;
     //   i = 0;

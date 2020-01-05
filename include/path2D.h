@@ -4,6 +4,8 @@
 
 class Path2D {
   public:
+  typedef std::vector<std::shared_ptr<Point2D>> points_t;
+
   Path2D() = default;
   Path2D(const Path2D &path) = default;
   Path2D(Path2D &&path) = default;
@@ -16,7 +18,8 @@ class Path2D {
   Path2D &operator=(const Path2D &path) = default;
   Path2D &operator=(Path2D &&path) = default;
 
-  std::vector<std::shared_ptr<Point2D>> &getPoints();
+  const points_t &getPointsVector() const;
+  points_t &pointsVector();
 
   Path2D copy() const;
 
@@ -27,5 +30,5 @@ class Path2D {
   Path2D &withSmoothening(double weight, int iterations);
 
   protected:
-  std::vector<std::shared_ptr<Point2D>> points;
+  points_t points;
 };

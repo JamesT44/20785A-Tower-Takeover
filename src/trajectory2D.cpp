@@ -7,29 +7,37 @@ Trajectory2D::Trajectory2D(const std::vector<Point2D> &path) : Path2D{path} {
 Trajectory2D::Trajectory2D(std::vector<Point2D> &&path) : Path2D{path} {
 }
 
-std::vector<okapi::QCurvature> &Trajectory2D::getCurvatures() {
+const std::vector<okapi::QCurvature> &Trajectory2D::getCurvaturesVector() const {
   return curvatures;
 }
 
-std::vector<okapi::QSpeed> &Trajectory2D::getVelocities() {
+std::vector<okapi::QCurvature> &Trajectory2D::curvaturesVector() {
+  return curvatures;
+}
+
+const std::vector<okapi::QSpeed> &Trajectory2D::getVelocitiesVector() const {
+  return velocities;
+}
+
+std::vector<okapi::QSpeed> &Trajectory2D::velocitiesVector() {
   return velocities;
 }
 
 Trajectory2D Trajectory2D::copy() const {
   Trajectory2D temp;
-  temp.getPoints().reserve(points.size());
+  temp.pointsVector().reserve(points.size());
   for (auto &&point : points) {
-    temp.getPoints().emplace_back(std::make_shared<Point2D>(*point));
+    temp.pointsVector().emplace_back(std::make_shared<Point2D>(*point));
   }
 
-  temp.getCurvatures().reserve(curvatures.size());
+  temp.curvaturesVector().reserve(curvatures.size());
   for (auto &&curvature : curvatures) {
-    temp.getCurvatures().emplace_back(curvature);
+    temp.curvaturesVector().emplace_back(curvature);
   }
 
-  temp.getVelocities().reserve(velocities.size());
+  temp.velocitiesVector().reserve(velocities.size());
   for (auto &&velocity : velocities) {
-    temp.getVelocities().emplace_back(velocity);
+    temp.velocitiesVector().emplace_back(velocity);
   }
 
   return temp;
@@ -156,5 +164,5 @@ void Trajectory2D::setVelocities(const okapi::QSpeed &maxVel,
 bool Trajectory2D::SDCardInserted() {
   std::ofstream f("/usd/sdcard_check");
   f.close();
-  return bool(f);
+  return f.fail();
 }

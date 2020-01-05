@@ -32,8 +32,11 @@ class Trajectory2D : public Path2D {
   Trajectory2D &operator=(const Trajectory2D &path) = default;
   Trajectory2D &operator=(Trajectory2D &&path) = default;
 
-  std::vector<okapi::QCurvature> &getCurvatures();
-  std::vector<okapi::QSpeed> &getVelocities();
+  const std::vector<okapi::QCurvature> &getCurvaturesVector() const;
+  std::vector<okapi::QCurvature> &curvaturesVector();
+
+  const std::vector<okapi::QSpeed> &getVelocitiesVector() const;
+  std::vector<okapi::QSpeed> &velocitiesVector();
 
   Trajectory2D copy() const;
 

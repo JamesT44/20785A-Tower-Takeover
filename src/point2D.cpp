@@ -6,6 +6,9 @@
 Point2D::Point2D(const okapi::QLength &x, const okapi::QLength &y) : x(x), y(y) {
 }
 
+Point2D::Point2D(const okapi::OdomState &state) : x(state.x), y(state.y) {
+}
+
 okapi::QLength &Point2D::operator[](size_t index) {
   switch (index) {
   case 0:
@@ -59,9 +62,17 @@ okapi::QLength Point2D::dist(const Point2D &point) {
 }
 
 okapi::QLength Point2D::magnitude(const Point2D &point) {
-  return (point.x * point.x + point.y * point.y).sqrt();
+  return dist(point, {0_ft, 0_ft});
 }
 
 okapi::QLength Point2D::magnitude() {
   return magnitude(*this);
+}
+
+okapi::QArea Point2D::dot(const Point2D &lhs, const Point2D &rhs) {
+  return lhs.x * rhs.x + lhs.y * rhs.y;
+}
+
+okapi::QArea Point2D::dot(const Point2D &point) {
+  return dot(*this, point);
 }

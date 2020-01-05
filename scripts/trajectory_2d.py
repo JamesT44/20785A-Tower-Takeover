@@ -99,9 +99,9 @@ class Trajectory2D:
 
 
 feet = (1 * ureg.foot).to(ureg.metre).magnitude
-traj = Trajectory2D([(0, 0), (0, 2 * feet), (2 * feet, 4 * feet), (4 * feet, 2 * feet), (2 * feet, 2 * feet)])
+traj = Trajectory2D([(0, 0), (0, 4 * feet), (2 * feet, 4 * feet), (4 * feet, 2 * feet)])
 traj.interpolate(0.01)
-traj.smoothen(0.9, 1000)
+traj.smoothen(0.8, 1000)
 traj.set_curvatures()
 traj.set_velocities(0.75, 0.4, 3)
 traj.visualise("velocities", feet)
