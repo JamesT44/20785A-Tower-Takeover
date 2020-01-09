@@ -1,6 +1,7 @@
 #include "customOdometry.h"
 #include "debugScreen.h"
 #include "main.h"
+#include "purePursuit.h"
 
 okapi::Controller mainController(okapi::ControllerId::master);
 
@@ -37,17 +38,32 @@ std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
 std::unique_ptr<CustomOdometry> robotOdometry =
   std::make_unique<CustomOdometry>(okapi::TimeUtilFactory().create(), robotModel, odomScale);
 
+auto cci = std::make_shared<okapi::ChassisControllerIntegrated>(
+  okapi::TimeUtilFactory().create(),
+  robotModel,
+  std::make_unique<okapi::AsyncPosIntegratedController>(
+    chassisLMtrs,
+    okapi::AbstractMotor::gearset::green,
+    okapi::toUnderlyingType(okapi::AbstractMotor::gearset::green),
+    okapi::TimeUtilFactory().create(),
+    okapi::Logger::getDefaultLogger()),
+  std::make_unique<okapi::AsyncPosIntegratedController>(
+    chassisRMtrs,
+    okapi::AbstractMotor::gearset::green,
+    okapi::toUnderlyingType(okapi::AbstractMotor::gearset::green),
+    okapi::TimeUtilFactory().create(),
+    okapi::Logger::getDefaultLogger()),
+  okapi::AbstractMotor::gearset::green,
+  chassisScale);
+
 std::shared_ptr<okapi::OdomChassisController> chassisControl =
-  okapi::ChassisControllerBuilder()
-    .withMotors(chassisLMtrs, chassisRMtrs)
-    .withDimensions(okapi::AbstractMotor::gearset::green, chassisScale)
-    .withSensors(LEnc, REnc, MEnc)
-    .withMaxVelocity(70)
-    .withOdometry(std::move(robotOdometry), okapi::StateMode::CARTESIAN)
-    .buildOdometry();
+  std::make_shared<okapi::DefaultOdomChassisController>(okapi::TimeUtilFactory().create(),
+                                                        std::move(robotOdometry),
+                                                        cci);
 
 DebugScreen debugDisplay(lv_scr_act(), chassisControl);
 
+PurePursuit pursuit = PurePursuit(chassisControl, 1.1_ft);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *

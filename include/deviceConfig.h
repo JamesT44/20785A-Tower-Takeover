@@ -3,6 +3,7 @@
 #include "main.h"
 #include "debugScreen.h"
 #include "customOdometry.h"
+#include "purePursuit.h"
 
 // Forward declarations
 extern okapi::Controller mainController;
@@ -13,3 +14,4 @@ extern okapi::ChassisScales chassisScale, odomScale;
 extern std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel;
 extern std::shared_ptr<okapi::OdomChassisController> chassisControl;
 extern DebugScreen debugDisplay;
+extern PurePursuit pursuit;

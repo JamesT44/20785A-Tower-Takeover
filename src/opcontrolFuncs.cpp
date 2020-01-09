@@ -1,6 +1,7 @@
 #include "opcontrolFuncs.h"
 #include "basicFuncs.h"
 #include "deviceConfig.h"
+#include "purePursuit.h"
 
 // Named buttons
 okapi::ControllerButton forwardBtn(okapi::ControllerDigital::up);
@@ -12,6 +13,9 @@ okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::L1);
 okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::L2);
 okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
+
+okapi::ControllerButton pursuitTestBtn(okapi::ControllerDigital::X);
+okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrol() {
   // if (forwardBtn.changedToReleased()) {
@@ -25,8 +29,26 @@ void chassisOpcontrol() {
   //   chassisControl->turnAngle(1440_deg);
   //   chassisControl->stop();
   // } else {
-  setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
-             mainController.getAnalog(okapi::ControllerAnalog::rightY));
+
+  if (pursuitTestBtn.changedToReleased()) {
+
+    auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 4_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}})
+                  .withInterpolation(1_cm)
+                  .withSmoothening(0.9, 1000)
+                  .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
+
+    chassisControl->setState({0_ft, 0_ft, 0_deg});
+    pursuit.executeTrajectory(path, 1.1_mps2);
+  }
+  if (odomTestBtn.changedToReleased()) {
+    chassisControl->setState({0_ft, 0_ft, 0_deg});
+    chassisControl->driveToPoint({0_ft, 6_ft});
+    chassisControl->driveToPoint({8_ft, 6_ft});
+    chassisControl->driveToPoint({8_ft, 0_ft});
+    chassisControl->driveToPoint({0_ft, 0_ft});
+  }
+  // setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
+  //            mainController.getAnalog(okapi::ControllerAnalog::rightY));
   // }
 }
 
