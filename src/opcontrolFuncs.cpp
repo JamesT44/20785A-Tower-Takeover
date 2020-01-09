@@ -17,39 +17,30 @@ okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 okapi::ControllerButton pursuitTestBtn(okapi::ControllerDigital::X);
 okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
 
-void chassisOpcontrol() {
-  // if (forwardBtn.changedToReleased()) {
-  //   chassisControl->moveDistance(8_ft);
-  // } else if (backwardBtn.changedToReleased()) {
-  //   chassisControl->moveDistance(-8_ft);
-  // } else if (turnLBtn.changedToReleased()) {
-  //   chassisControl->turnAngle(-1440_deg);
-  //   chassisControl->stop();
-  // } else if (turnRBtn.changedToReleased()) {
-  //   chassisControl->turnAngle(1440_deg);
-  //   chassisControl->stop();
-  // } else {
+void chassisOpcontrolTask(void *ignore) {
+  while (true) {
+    if (pursuitTestBtn.changedToReleased()) {
 
-  if (pursuitTestBtn.changedToReleased()) {
+      auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 4_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}})
+                    .withInterpolation(1_cm)
+                    .withSmoothening(0.9, 1000)
+                    .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
 
-    auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 4_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}})
-                  .withInterpolation(1_cm)
-                  .withSmoothening(0.9, 1000)
-                  .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
+      chassisControl->setState({0_ft, 0_ft, 0_deg});
+      pursuit.executeTrajectory(path, 1.1_mps2);
+    } else if (odomTestBtn.changedToReleased()) {
+      chassisControl->setState({0_ft, 0_ft, 0_deg});
+      chassisControl->driveToPoint({0_ft, 4_ft});
+      chassisControl->driveToPoint({4_ft, 4_ft});
+      chassisControl->driveToPoint({4_ft, 0_ft});
+      chassisControl->driveToPoint({0_ft, 0_ft});
+    } else {
+      setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
+                 mainController.getAnalog(okapi::ControllerAnalog::rightY));
+    }
 
-    chassisControl->setState({0_ft, 0_ft, 0_deg});
-    pursuit.executeTrajectory(path, 1.1_mps2);
+    pros::Task::delay_until((std::uint32_t *)pros::millis(), 10);
   }
-  if (odomTestBtn.changedToReleased()) {
-    chassisControl->setState({0_ft, 0_ft, 0_deg});
-    chassisControl->driveToPoint({0_ft, 6_ft});
-    chassisControl->driveToPoint({8_ft, 6_ft});
-    chassisControl->driveToPoint({8_ft, 0_ft});
-    chassisControl->driveToPoint({0_ft, 0_ft});
-  }
-  // setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
-  //            mainController.getAnalog(okapi::ControllerAnalog::rightY));
-  // }
 }
 
 void tilterOpcontrol() {

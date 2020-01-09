@@ -2,9 +2,10 @@
 #include "deviceConfig.h"
 #include "main.h"
 #include "opcontrolFuncs.h"
+#include "pros/apix.h"
+#include "pros/rtos.hpp"
 #include "purePursuit.h"
 #include "trajectory2D.h"
-#include <fstream>
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -28,11 +29,11 @@ void opcontrol() {
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
-
+  std::string s = "Hello world";
+  pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
   // int i = 0;
   while (true) {
     // Abstracted into functions
-    chassisOpcontrol();
     tilterOpcontrol();
     intakeOpcontrol();
 

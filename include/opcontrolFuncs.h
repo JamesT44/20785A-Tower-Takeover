@@ -8,6 +8,6 @@ const float tilterInPower = 0.5;
 const float liftPower = 1;
 const float intakePower = 1;
 
-void chassisOpcontrol();
+void chassisOpcontrolTask(void *ignore);
 void tilterOpcontrol();
 void intakeOpcontrol();
