@@ -1,11 +1,11 @@
-#include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
+#include "screenDisplay.h"
 
 LV_IMG_DECLARE(field_img);
 
-DebugScreen::DebugScreen(lv_obj_t *parent,
-                         const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
+ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
+                             const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
   : tabview(lv_tabview_create(parent, NULL)), robotController(robotOdom) {
 
   lv_tabview_set_btns_hidden(tabview, true);
@@ -35,11 +35,11 @@ DebugScreen::DebugScreen(lv_obj_t *parent,
   lv_obj_align(fieldImg, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
 }
 
-DebugScreen::~DebugScreen() {
+ScreenDisplay::~ScreenDisplay() {
   lv_obj_del(tabview);
 }
 
-void DebugScreen::updateOdom() {
+void ScreenDisplay::updateOdom() {
 
   std::valarray<std::int32_t> encValues = robotController->getModel()->getSensorVals();
   okapi::OdomState state = robotController->getState();
@@ -81,7 +81,7 @@ void DebugScreen::updateOdom() {
   // lv_obj_invalidate(robotLine);
 }
 
-std::shared_ptr<okapi::OdomChassisController> DebugScreen::getRobotController() {
+std::shared_ptr<okapi::OdomChassisController> ScreenDisplay::getRobotController() {
   return robotController;
 }
 

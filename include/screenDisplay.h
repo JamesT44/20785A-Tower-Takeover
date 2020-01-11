@@ -11,10 +11,10 @@ static const double centreDist = (3.5_in).convert(okapi::foot);
 
 static const int fieldImgSize = 216;
 
-class DebugScreen {
+class ScreenDisplay {
   public:
-  DebugScreen(lv_obj_t *parent, const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
-  ~DebugScreen();
+  ScreenDisplay(lv_obj_t *parent, const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
+  ~ScreenDisplay();
 
   void updateOdom();
   std::shared_ptr<okapi::OdomChassisController> getRobotController();

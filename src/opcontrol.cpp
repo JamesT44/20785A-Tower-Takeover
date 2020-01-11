@@ -1,10 +1,10 @@
-#include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
 #include "opcontrolFuncs.h"
 #include "pros/apix.h"
 #include "pros/rtos.hpp"
 #include "purePursuit.h"
+#include "screenDisplay.h"
 #include "trajectory2D.h"
 
 /**
@@ -37,7 +37,7 @@ void opcontrol() {
     tilterOpcontrol();
     intakeOpcontrol();
 
-    debugDisplay.updateOdom();
+    mainDisplay.updateOdom();
 
     if (i++ == 50) {
       std::cout << chassisControl->getState().str() << std::endl;
