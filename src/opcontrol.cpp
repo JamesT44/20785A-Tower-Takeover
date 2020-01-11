@@ -31,7 +31,7 @@ void opcontrol() {
   // path.saveToSD("test2");
   std::string s = "Hello world";
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
-  // int i = 0;
+  int i = 0;
   while (true) {
     // Abstracted into functions
     tilterOpcontrol();
@@ -39,10 +39,10 @@ void opcontrol() {
 
     debugDisplay.updateOdom();
 
-    // if (i++ == 50) {
-    //   std::cout << chassisControl->getState().str() << std::endl;
-    //   i = 0;
-    // }
+    if (i++ == 50) {
+      std::cout << chassisControl->getState().str() << std::endl;
+      i = 0;
+    }
     pros::delay(10);
   }
 }

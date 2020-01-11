@@ -19,3 +19,4 @@ temp.errors
 .idea/
 venv/
 __pycache__/
+*.csv

@@ -38,8 +38,8 @@ void chassisOpcontrolTask(void *ignore) {
       setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
                  mainController.getAnalog(okapi::ControllerAnalog::rightY));
     }
-
-    pros::Task::delay_until((std::uint32_t *)pros::millis(), 10);
+    // std::cout << "test\n";
+    pros::delay(10);
   }
 }
 
