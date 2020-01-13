@@ -13,6 +13,7 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_obj_t *autonTab = lv_tabview_add_tab(tabview, "Autonomous");
   lv_obj_t *autonTabLeft = lv_cont_create(autonTab, NULL);
   lv_cont_set_layout(autonTabLeft, LV_LAYOUT_PRETTY);
+  lv_obj_set_size(autonTabLeft, 220, 230);
 
   lv_obj_t *allianceLabel = lv_label_create(autonTabLeft, NULL);
   lv_label_set_text(allianceLabel, "Alliance: ");
@@ -29,7 +30,7 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_sw_set_style(allianceSw, LV_SW_STYLE_KNOB_ON, &style_sw_red);
   lv_sw_set_style(allianceSw, LV_SW_STYLE_INDIC, &lv_style_transp);
 
-  lv_obj_t *autonRoller = lv_roller_create(autonTab, NULL);
+  lv_obj_t *autonRoller = lv_roller_create(autonTabLeft, NULL);
   lv_roller_set_options(autonRoller, autonRollerOptions);
   lv_roller_set_selected(autonRoller, 2, false);
 
