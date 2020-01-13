@@ -16,3 +16,7 @@ void setTilter(double power) {
 void setIntake(double power) {
   intakeMtrs->moveVoltage(power * maxVoltage);
 }
+
+void setLiftTarget(double degrees) {
+  liftMtr.moveAbsolute(degrees * 5, 200.0);
+}

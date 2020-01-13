@@ -10,3 +10,5 @@ void setChassis(double power);
 
 void setTilter(double power);
 void setIntake(double power);
+
+void setLiftTarget(double degrees);

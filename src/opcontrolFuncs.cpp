@@ -4,20 +4,18 @@
 #include "purePursuit.h"
 
 // Named buttons
-okapi::ControllerButton forwardBtn(okapi::ControllerDigital::up);
-okapi::ControllerButton backwardBtn(okapi::ControllerDigital::down);
-okapi::ControllerButton turnLBtn(okapi::ControllerDigital::left);
-okapi::ControllerButton turnRBtn(okapi::ControllerDigital::right);
-
-okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::L1);
-okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::L2);
+okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::up);
+okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::down);
 okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
+okapi::ControllerButton liftUpBtn(okapi::ControllerDigital::L1);
+okapi::ControllerButton liftDownBtn(okapi::ControllerDigital::L2);
 
 okapi::ControllerButton pursuitTestBtn(okapi::ControllerDigital::X);
 okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrolTask(void *ignore) {
+  std::uint32_t prev_time = pros::millis();
   while (true) {
     if (pursuitTestBtn.changedToReleased()) {
 
@@ -38,8 +36,22 @@ void chassisOpcontrolTask(void *ignore) {
       setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
                  mainController.getAnalog(okapi::ControllerAnalog::rightY));
     }
-    // std::cout << "test\n";
-    pros::delay(10);
+
+    pros::Task::delay_until(&prev_time, 10);
+  }
+}
+
+void liftOpcontrol() {
+  if (liftUpBtn.changedToReleased()) {
+    if (liftPresetIndex != numLiftPresets - 1) {
+      liftPresetIndex += 1;
+      setLiftTarget(liftPresets[liftPresetIndex]);
+    }
+  } else if (liftDownBtn.changedToReleased()) {
+    if (liftPresetIndex != 0) {
+      liftPresetIndex -= 1;
+      setLiftTarget(liftPresets[liftPresetIndex]);
+    }
   }
 }
 

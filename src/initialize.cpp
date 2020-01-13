@@ -4,7 +4,10 @@
 #include "purePursuit.h"
 
 okapi::Controller mainController(okapi::ControllerId::master);
-
+okapi::Motor liftMtr = okapi::Motor(9,
+                                    true,
+                                    okapi::AbstractMotor::gearset::green,
+                                    okapi::AbstractMotor::encoderUnits::degrees);
 okapi::Motor tilterMtr = okapi::Motor(5,
                                       false,
                                       okapi::AbstractMotor::gearset::red,

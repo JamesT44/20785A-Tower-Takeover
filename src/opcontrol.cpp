@@ -34,6 +34,7 @@ void opcontrol() {
   int i = 0;
   while (true) {
     // Abstracted into functions
+    liftOpcontrol();
     tilterOpcontrol();
     intakeOpcontrol();
 
