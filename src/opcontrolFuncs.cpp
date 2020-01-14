@@ -19,26 +19,13 @@ okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrolTask(void *ignore) {
   while (true) {
-    if (pursuitTestBtn.changedToReleased()) {
-
-      auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 4_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}})
-                    .withInterpolation(1_cm)
-                    .withSmoothening(0.9, 1000)
-                    .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
-
-      chassisControl->setState({0_ft, 0_ft, 0_deg});
-      pursuit.executeTrajectory(path, 1.1_mps2);
-    } else if (odomTestBtn.changedToReleased()) {
-      chassisControl->setState({0_ft, 0_ft, 0_deg});
-      chassisControl->driveToPoint({0_ft, 4_ft});
-      chassisControl->driveToPoint({4_ft, 4_ft});
-      chassisControl->driveToPoint({4_ft, 0_ft});
-      chassisControl->driveToPoint({0_ft, 0_ft});
+    if (backwardBtn.isPressed()) {
+      setChassis(-0.25);
     } else {
       setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
                  mainController.getAnalog(okapi::ControllerAnalog::rightY));
     }
-    // std::cout << "test\n";
+
     pros::delay(10);
   }
 }
