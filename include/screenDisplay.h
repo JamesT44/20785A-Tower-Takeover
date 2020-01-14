@@ -5,6 +5,8 @@
 
 LV_IMG_DECLARE(auton_blue_1pt);
 LV_IMG_DECLARE(auton_red_1pt);
+LV_IMG_DECLARE(auton_blue_5pt_small);
+LV_IMG_DECLARE(auton_red_5pt_small);
 LV_IMG_DECLARE(auton_none);
 LV_IMG_DECLARE(odom_field_img);
 
@@ -14,8 +16,8 @@ static const char *autonOptionStrs[] = {"none",
                                         "8pt small goal",
                                         "skills"};
 static const lv_img_dsc_t *autonOptionImgs[][5] = {
-  {&auton_none, &auton_blue_1pt, &auton_none, &auton_none, &auton_none},
-  {&auton_none, &auton_red_1pt, &auton_none, &auton_none, &auton_none}};
+  {&auton_none, &auton_blue_1pt, &auton_blue_5pt_small, &auton_none, &auton_none},
+  {&auton_none, &auton_red_1pt, &auton_red_5pt_small_none, &auton_none, &auton_none}};
 
 static const char *odomBtnmMap[] = {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
 
