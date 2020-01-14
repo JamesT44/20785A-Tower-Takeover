@@ -2,9 +2,6 @@
 #include "deviceConfig.h"
 #include "main.h"
 
-LV_IMG_DECLARE(auton_field_img);
-LV_IMG_DECLARE(odom_field_img);
-
 ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
                              const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
   : tabview(lv_tabview_create(parent, NULL)), robotController(robotOdom) {
@@ -18,7 +15,7 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_obj_t *allianceLabel = lv_label_create(autonTabLeft, NULL);
   lv_label_set_text(allianceLabel, "Alliance: ");
 
-  lv_obj_t *allianceSw = lv_sw_create(autonTabLeft, NULL);
+  allianceSw = lv_sw_create(autonTabLeft, NULL);
   static lv_style_t allianceSwStyle;
   lv_style_copy(&style_sw_blue, &lv_style_pretty);
   style_sw_blue.body.main_color = LV_COLOR_BLUE;
@@ -29,13 +26,29 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_sw_set_style(allianceSw, LV_SW_STYLE_KNOB_OFF, &style_sw_blue);
   lv_sw_set_style(allianceSw, LV_SW_STYLE_KNOB_ON, &style_sw_red);
   lv_sw_set_style(allianceSw, LV_SW_STYLE_INDIC, &lv_style_transp);
+  lv_sw_set_action(allianceSw, autonTabCallback);
+  lv_obj_set_free_ptr(allianceSw, this);
 
-  lv_obj_t *autonRoller = lv_roller_create(autonTabLeft, NULL);
-  lv_roller_set_options(autonRoller, autonRollerOptions);
-  lv_roller_set_selected(autonRoller, 2, false);
+  autonRoller = lv_roller_create(autonTabLeft, NULL);
 
-  lv_obj_t *autonImg = lv_img_create(autonTab, NULL);
-  lv_img_set_src(autonImg, &auton_field_img);
+  std::string autonRollerOptions;
+  size_t n = sizeof(autonOptionStrs) / sizeof(autonOptionStrs[0]);
+  for (int i = 0; i < n; ++i) {
+    if (autonOptionStrs[i] != NULL)
+      autonRollerOptions += autonOptionStrs[i];
+    if (i < n - 1) {
+      autonRollerOptions += "\n";
+    }
+  }
+
+  lv_roller_set_options(autonRoller, autonRollerOptions.c_str());
+  lv_roller_set_selected(autonRoller, 0, false);
+  lv_obj_set_height(autonRoller, 150);
+  lv_roller_set_action(allianceSw, autonTabCallback);
+  lv_obj_set_free_ptr(autonRoller, this);
+
+  autonImg = lv_img_create(autonTab, NULL);
+  lv_img_set_src(autonImg, &auton_none);
 
   lv_obj_align(autonTabLeft, NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
   lv_obj_align(autonImg, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
@@ -71,8 +84,19 @@ ScreenDisplay::~ScreenDisplay() {
   lv_obj_del(tabview);
 }
 
-void ScreenDisplay::updateOdom() {
+std::pair<bool, char *> ScreenDisplay::getAutonSelection() {
+  char *auton_str;
+  lv_roller_get_selected_str(autonRoller, auton_str);
 
+  return std::make_pair(lv_sw_get_state(allianceSw), auton_str);
+}
+
+void ScreenDisplay::updateAuton() {
+  lv_img_set_src(autonImg,
+                 autonOptionImgs[lv_sw_get_state(allianceSw)][lv_roller_get_selected(autonRoller)]);
+}
+
+void ScreenDisplay::updateOdom() {
   std::valarray<std::int32_t> encValues = robotController->getModel()->getSensorVals();
   okapi::OdomState state = robotController->getState();
 
@@ -137,5 +161,10 @@ lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text) {
     state.theta += 90_deg;
     chassisControl->setState(state);
   }
+  return LV_RES_OK;
+}
+
+lv_res_t autonTabCallback(lv_obj_t *obj) {
+  static_cast<ScreenDisplay *>(lv_obj_get_free_ptr(obj))->updateAuton();
   return LV_RES_OK;
 }

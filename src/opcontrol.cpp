@@ -29,7 +29,6 @@ void opcontrol() {
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
-  std::string s = "Hello world";
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
   int i = 0;
   while (true) {

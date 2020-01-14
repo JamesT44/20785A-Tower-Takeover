@@ -3,8 +3,19 @@
 #include "customOdometry.h"
 #include "main.h"
 
-static const char *autonRollerOptions =
-  "none\n1pt any goal\n5pt small goal\n8pt small goal\nskills";
+LV_IMG_DECLARE(auton_blue_1pt);
+LV_IMG_DECLARE(auton_red_1pt);
+LV_IMG_DECLARE(auton_none);
+LV_IMG_DECLARE(odom_field_img);
+
+static const char *autonOptionStrs[] = {"none",
+                                        "1pt any goal",
+                                        "5pt small goal",
+                                        "8pt small goal",
+                                        "skills"};
+static const lv_img_dsc_t *autonOptionImgs[][5] = {
+  {&auton_none, &auton_blue_1pt, &auton_none, &auton_none, &auton_none},
+  {&auton_none, &auton_red_1pt, &auton_none, &auton_none, &auton_none}};
 
 static const char *odomBtnmMap[] = {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
 
@@ -19,10 +30,15 @@ class ScreenDisplay {
   ScreenDisplay(lv_obj_t *parent, const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
   ~ScreenDisplay();
 
+  std::pair<bool, char *> getAutonSelection();
+  void updateAuton();
   void updateOdom();
   std::shared_ptr<okapi::OdomChassisController> getRobotController();
 
   protected:
+  lv_obj_t *allianceSw;
+  lv_obj_t *autonRoller;
+  lv_obj_t *autonImg;
   lv_style_t style_sw_blue;
   lv_style_t style_sw_red;
 
@@ -33,4 +49,5 @@ class ScreenDisplay {
   std::vector<lv_point_t> robotPoints = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 };
 
+lv_res_t autonTabCallback(lv_obj_t *obj);
 lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text);
