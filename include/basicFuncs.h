@@ -9,4 +9,6 @@ void setChassis(double leftPower, double rightPower);
 void setChassis(double power);
 
 void setTilter(double power);
+void setTilterVelocity(double velocity);
+
 void setIntake(double power);

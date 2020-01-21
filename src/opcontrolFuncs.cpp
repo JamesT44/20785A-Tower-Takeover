@@ -32,9 +32,9 @@ void chassisOpcontrolTask(void *ignore) {
 
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
-    setTilter(tilterOutPower);
+    setTilterVelocity(tilterOutVelocity);
   } else if (tiltInBtn.isPressed()) {
-    setTilter(-tilterInPower);
+    setTilterVelocity(-tilterInVelocity);
   } else {
     setTilter(0);
   }

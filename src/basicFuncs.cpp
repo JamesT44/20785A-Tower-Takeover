@@ -13,6 +13,10 @@ void setTilter(double power) {
   tilterMtr.moveVoltage(power * maxVoltage);
 }
 
+void setTilterVelocity(double velocity) {
+  tilterMtr.moveVelocity(velocity);
+}
+
 void setIntake(double power) {
   intakeMtrs->moveVoltage(power * maxVoltage);
 }

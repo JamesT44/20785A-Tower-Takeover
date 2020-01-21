@@ -7,7 +7,7 @@
 
 // Forward declarations
 extern okapi::Controller mainController;
-extern okapi::Motor tilterMtr;
+extern okapi::Motor tilterMtr, liftMtr;
 extern std::shared_ptr<okapi::MotorGroup> chassisLMtrs, chassisRMtrs, intakeMtrs;
 extern std::shared_ptr<okapi::ADIEncoder> LEnc, REnc, MEnc;
 extern okapi::ChassisScales chassisScale, odomScale;
