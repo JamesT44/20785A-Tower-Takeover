@@ -19,7 +19,7 @@ static const char *autonOptionStrs[] = {"none",
                                         "skills"};
 static const lv_img_dsc_t *autonOptionImgs[][5] = {
   {&auton_none, &auton_blue_1pt, &auton_blue_5pt_small, &auton_blue_8pt_small, &auton_none},
-  {&auton_none, &auton_red_1pt, &auton_red_5pt_small_none, &auton_red_8pt_small, &auton_none}};
+  {&auton_none, &auton_red_1pt, &auton_red_5pt_small, &auton_red_8pt_small, &auton_none}};
 
 static const char *odomBtnmMap[] = {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
 
