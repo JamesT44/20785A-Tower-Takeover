@@ -26,8 +26,6 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_sw_set_style(allianceSw, LV_SW_STYLE_KNOB_OFF, &style_sw_blue);
   lv_sw_set_style(allianceSw, LV_SW_STYLE_KNOB_ON, &style_sw_red);
   lv_sw_set_style(allianceSw, LV_SW_STYLE_INDIC, &lv_style_transp);
-  lv_sw_set_action(allianceSw, autonTabCallback);
-  lv_obj_set_free_ptr(allianceSw, this);
 
   autonRoller = lv_roller_create(autonTabLeft, NULL);
 
@@ -44,11 +42,9 @@ ScreenDisplay::ScreenDisplay(lv_obj_t *parent,
   lv_roller_set_options(autonRoller, autonRollerOptions.c_str());
   lv_roller_set_selected(autonRoller, 0, false);
   lv_obj_set_height(autonRoller, 150);
-  lv_roller_set_action(allianceSw, autonTabCallback);
-  lv_obj_set_free_ptr(autonRoller, this);
 
   autonImg = lv_img_create(autonTab, NULL);
-  lv_img_set_src(autonImg, &auton_none);
+  updateAuton();
 
   lv_obj_align(autonTabLeft, NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
   lv_obj_align(autonImg, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
@@ -161,10 +157,5 @@ lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text) {
     state.theta += 90_deg;
     chassisControl->setState(state);
   }
-  return LV_RES_OK;
-}
-
-lv_res_t autonTabCallback(lv_obj_t *obj) {
-  static_cast<ScreenDisplay *>(lv_obj_get_free_ptr(obj))->updateAuton();
   return LV_RES_OK;
 }

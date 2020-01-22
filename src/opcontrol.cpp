@@ -37,7 +37,8 @@ void opcontrol() {
     tilterOpcontrol();
     intakeOpcontrol();
 
-    // mainDisplay.updateOdom();
+    mainDisplay.updateAuton();
+    mainDisplay.updateOdom();
 
     if (i++ == 50) {
       std::cout << liftMtr.getPosition() << std::endl;

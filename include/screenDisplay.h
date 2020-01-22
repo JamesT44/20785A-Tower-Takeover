@@ -53,5 +53,4 @@ class ScreenDisplay {
   std::vector<lv_point_t> robotPoints = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 };
 
-lv_res_t autonTabCallback(lv_obj_t *obj);
 lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text);

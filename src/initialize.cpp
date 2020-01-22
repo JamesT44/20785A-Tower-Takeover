@@ -69,7 +69,7 @@ std::shared_ptr<okapi::OdomChassisController> chassisControl =
                                                         std::move(robotOdometry),
                                                         cci);
 
-// ScreenDisplay mainDisplay(lv_scr_act(), chassisControl);
+ScreenDisplay mainDisplay(lv_scr_act(), chassisControl);
 
 PurePursuit pursuit = PurePursuit(chassisControl, 1.1_ft);
 /**
