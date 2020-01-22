@@ -4,13 +4,12 @@
 #include "purePursuit.h"
 
 // Named buttons
-okapi::ControllerButton forwardBtn(okapi::ControllerDigital::up);
-okapi::ControllerButton backwardBtn(okapi::ControllerDigital::down);
-okapi::ControllerButton turnLBtn(okapi::ControllerDigital::left);
-okapi::ControllerButton turnRBtn(okapi::ControllerDigital::right);
+okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::up);
+okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::down);
+okapi::ControllerButton backwardBtn(okapi::ControllerDigital::left);
 
-okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::L1);
-okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::L2);
+okapi::ControllerButton liftUpBtn(okapi::ControllerDigital::L1);
+okapi::ControllerButton liftDownBtn(okapi::ControllerDigital::L2);
 okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 
@@ -30,13 +29,37 @@ void chassisOpcontrolTask(void *ignore) {
   }
 }
 
+void liftOpcontrolTask(void *ignore) {
+  size_t liftPresetIndex = 0;
+  setLift(liftPresets[liftPresetIndex]);
+  while (true) {
+    if (liftUpBtn.changedToReleased()) {
+      if (liftPresetIndex < liftPresetNum - 1) {
+        liftPresetIndex += 1;
+        setLift(liftPresets[liftPresetIndex]);
+      }
+    } else if (liftDownBtn.changedToReleased()) {
+      if (liftPresetIndex > 0) {
+        liftPresetIndex -= 1;
+        setLift(liftPresets[liftPresetIndex]);
+      }
+    }
+
+    pros::delay(10);
+  }
+}
+
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
-    setTilterVelocity(tilterOutVelocity);
+    if (tilterMtr.getPosition() > 2300) {
+      setTilterVelocity(tilterOutSlowVelocity);
+    } else {
+      setTilterVelocity(tilterOutFastVelocity);
+    }
   } else if (tiltInBtn.isPressed()) {
     setTilterVelocity(-tilterInVelocity);
   } else {
-    setTilter(0);
+    setTilterVelocity(0);
   }
 }
 
