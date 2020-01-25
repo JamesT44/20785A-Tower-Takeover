@@ -4,38 +4,45 @@
 #include "purePursuit.h"
 
 okapi::Controller mainController(okapi::ControllerId::master);
-okapi::Motor liftMtr = okapi::Motor(9,
-                                    true,
-                                    okapi::AbstractMotor::gearset::green,
-                                    okapi::AbstractMotor::encoderUnits::degrees);
-okapi::Motor tilterMtr = okapi::Motor(5,
-                                      false,
-                                      okapi::AbstractMotor::gearset::red,
-                                      okapi::AbstractMotor::encoderUnits::counts);
 
-std::shared_ptr<okapi::AsyncVelocityController<double, double>> tilterController =
-  okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
+okapi::Motor tilterMtr =
+  okapi::Motor(5,
+               false,
+               okapi::AbstractMotor::gearset::red,
+               okapi::AbstractMotor::encoderUnits::counts);
 
-okapi::Motor liftMtr = okapi::Motor(9,
-                                    true,
-                                    okapi::AbstractMotor::gearset::red,
-                                    okapi::AbstractMotor::encoderUnits::counts);
+std::shared_ptr<okapi::AsyncVelocityController<double, double>>
+  tilterController =
+    okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
+
+okapi::Motor liftMtr =
+  okapi::Motor(9,
+               true,
+               okapi::AbstractMotor::gearset::red,
+               okapi::AbstractMotor::encoderUnits::counts);
 
 std::shared_ptr<okapi::MotorGroup> chassisLMtrs =
-  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({1, 2}));
+  std::make_shared<okapi::MotorGroup>(
+    std::initializer_list<okapi::Motor>({1, 2}));
 std::shared_ptr<okapi::MotorGroup> chassisRMtrs =
-  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({-8, -4}));
+  std::make_shared<okapi::MotorGroup>(
+    std::initializer_list<okapi::Motor>({-8, -4}));
 std::shared_ptr<okapi::MotorGroup> intakeMtrs =
-  std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({6, -7}));
+  std::make_shared<okapi::MotorGroup>(
+    std::initializer_list<okapi::Motor>({6, -7}));
 
-std::shared_ptr<okapi::ADIEncoder> LEnc = std::make_shared<okapi::ADIEncoder>(7, 8);
-std::shared_ptr<okapi::ADIEncoder> REnc = std::make_shared<okapi::ADIEncoder>(1, 2, true);
-std::shared_ptr<okapi::ADIEncoder> MEnc = std::make_shared<okapi::ADIEncoder>(3, 4);
+std::shared_ptr<okapi::ADIEncoder> LEnc =
+  std::make_shared<okapi::ADIEncoder>(7, 8);
+std::shared_ptr<okapi::ADIEncoder> REnc =
+  std::make_shared<okapi::ADIEncoder>(1, 2, true);
+std::shared_ptr<okapi::ADIEncoder> MEnc =
+  std::make_shared<okapi::ADIEncoder>(3, 4);
 
 okapi::ChassisScales chassisScale =
   okapi::ChassisScales({4.157_in, 11.15_in}, okapi::imev5GreenTPR);
 okapi::ChassisScales odomScale =
-  okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in}, okapi::quadEncoderTPR);
+  okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in},
+                       okapi::quadEncoderTPR);
 
 std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
   std::make_shared<okapi::ThreeEncoderSkidSteerModel>(chassisLMtrs,
@@ -47,7 +54,9 @@ std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
                                                       12000);
 
 std::unique_ptr<CustomOdometry> robotOdometry =
-  std::make_unique<CustomOdometry>(okapi::TimeUtilFactory().create(), robotModel, odomScale);
+  std::make_unique<CustomOdometry>(okapi::TimeUtilFactory().create(),
+                                   robotModel,
+                                   odomScale);
 
 auto cci = std::make_shared<okapi::ChassisControllerIntegrated>(
   okapi::TimeUtilFactory().create(),
@@ -68,9 +77,10 @@ auto cci = std::make_shared<okapi::ChassisControllerIntegrated>(
   chassisScale);
 
 std::shared_ptr<okapi::OdomChassisController> chassisControl =
-  std::make_shared<okapi::DefaultOdomChassisController>(okapi::TimeUtilFactory().create(),
-                                                        std::move(robotOdometry),
-                                                        cci);
+  std::make_shared<okapi::DefaultOdomChassisController>(
+    okapi::TimeUtilFactory().create(),
+    std::move(robotOdometry),
+    cci);
 
 ScreenDisplay mainDisplay(lv_scr_act(), chassisControl);
 
@@ -90,21 +100,21 @@ void initialize() {
 }
 
 /**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
+ * Runs while the robot is in the disabled state of Field Management System
+ * or the VEX Competition Switch, following either autonomous or opcontrol.
+ * When the robot is enabled, this task will exit.
  */
 void disabled() {
 }
 
 /**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
+ * Runs after initialize(), and before autonomous when connected to the
+ * Field Management System or the VEX Competition Switch. This is intended
+ * for competition-specific initialization routines, such as an autonomous
+ * selector on the LCD.
  *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
+ * This task will exit when the robot is enabled and autonomous or
+ * opcontrol starts.
  */
 void competition_initialize() {
 }

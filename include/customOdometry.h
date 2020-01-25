@@ -8,23 +8,26 @@
 class CustomOdometry : public okapi::Odometry {
   public:
   /**
-   * CustomOdometry. Tracks the movement of the robot and estimates its position in coordinates
-   * relative to the start (assumed to be (0, 0, 0)).
+   * CustomOdometry. Uses 5225A's algorithm to track the movement of the
+   * robot and estimates its position in coordinates relative to the start
+   * (assumed to be (0, 0, 0)).
    *
    * @param itimeUtil The TimeUtil.
    * @param imodel The chassis model for reading sensors.
    * @param ichassisScales The chassis dimensions.
    * @param ilogger The logger this instance will log to.
    */
-  CustomOdometry(const okapi::TimeUtil &itimeUtil,
-                 const std::shared_ptr<okapi::ReadOnlyChassisModel> &imodel,
-                 const okapi::ChassisScales &ichassisScales,
-                 const std::shared_ptr<okapi::Logger> &ilogger = okapi::Logger::getDefaultLogger());
+  CustomOdometry(
+    const okapi::TimeUtil &itimeUtil,
+    const std::shared_ptr<okapi::ReadOnlyChassisModel> &imodel,
+    const okapi::ChassisScales &ichassisScales,
+    const std::shared_ptr<okapi::Logger> &ilogger =
+      okapi::Logger::getDefaultLogger());
 
   virtual ~CustomOdometry() = default;
 
   /**
-   * Sets the drive and turn scales.
+   * Sets the chassis parameters.
    */
   void setScales(const okapi::ChassisScales &ichassisScales) override;
 
@@ -34,13 +37,14 @@ class CustomOdometry : public okapi::Odometry {
   void step() override;
 
   /**
-   * Returns the current state.
+   * Returns the current state as an okapi::OdomState struct.
    *
    * @param imode The mode to return the state in.
    * @return The current state in the given format.
    */
   okapi::OdomState
-  getState(const okapi::StateMode &imode = okapi::StateMode::FRAME_TRANSFORMATION) const override;
+  getState(const okapi::StateMode &imode =
+             okapi::StateMode::FRAME_TRANSFORMATION) const override;
 
   /**
    * Sets a new state to be the current state.
@@ -49,7 +53,8 @@ class CustomOdometry : public okapi::Odometry {
    * @param imode The mode to treat the input state as.
    */
   void setState(const okapi::OdomState &istate,
-                const okapi::StateMode &imode = okapi::StateMode::FRAME_TRANSFORMATION) override;
+                const okapi::StateMode &imode =
+                  okapi::StateMode::FRAME_TRANSFORMATION) override;
 
   /**
    * @return The internal ChassisModel.
@@ -68,16 +73,20 @@ class CustomOdometry : public okapi::Odometry {
   std::shared_ptr<okapi::ReadOnlyChassisModel> model;
   okapi::ChassisScales chassisScales;
   okapi::OdomState state;
-  std::valarray<std::int32_t> newTicks{0, 0, 0}, tickDiff{0, 0, 0}, lastTicks{0, 0, 0};
+  std::valarray<std::int32_t> newTicks{0, 0, 0}, tickDiff{0, 0, 0},
+    lastTicks{0, 0, 0};
   const std::int32_t maximumTickDiff{1000};
 
   /**
-   * Does the math, side-effect free, for one odom step.
+   * Does 5225A's odometry algorithm one loop step.
    *
-   * @param itickDiff The tick difference from the previous step to this step.
-   * @param ideltaT The time difference from the previous step to this step.
+   * @param itickDiff The tick differences from the previous step to this
+   * step.
+   * @param ideltaT The time difference from the previous step to this
+   * step.
    * @return The newly computed OdomState.
    */
-  virtual okapi::OdomState odomMathStep(const std::valarray<std::int32_t> &itickDiff,
-                                        const okapi::QTime &ideltaT);
+  virtual okapi::OdomState
+  odomMathStep(const std::valarray<std::int32_t> &itickDiff,
+               const okapi::QTime &ideltaT);
 };
