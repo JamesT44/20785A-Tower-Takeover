@@ -31,17 +31,22 @@ void chassisOpcontrolTask(void *ignore) {
 }
 
 void liftOpcontrolTask(void *ignore) {
-  size_t liftPresetIndex = 0;
   setLift(liftPresets[liftPresetIndex]);
   while (true) {
     if (liftUpBtn.changedToReleased()) {
       if (liftPresetIndex < liftPresetNum - 1) {
+        if (liftPresetIndex == 0) {
+          tilterMtr.moveAbsolute(tilterOutPos, 100);
+        }
         liftPresetIndex += 1;
         setLift(liftPresets[liftPresetIndex]);
       }
     } else if (liftDownBtn.changedToReleased()) {
       if (liftPresetIndex > 0) {
         liftPresetIndex -= 1;
+        if (liftPresetIndex == 0) {
+          tilterMtr.moveAbsolute(tilterInPos, 100);
+        }
         setLift(liftPresets[liftPresetIndex]);
       }
     }
@@ -52,15 +57,18 @@ void liftOpcontrolTask(void *ignore) {
 
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
+    liftManual = true;
     if (tilterMtr.getPosition() > 2300) {
       setTilterVelocity(tilterOutSlowVelocity);
     } else {
       setTilterVelocity(tilterOutFastVelocity);
     }
   } else if (tiltInBtn.isPressed()) {
+    liftManual = true;
     setTilterVelocity(-tilterInVelocity);
-  } else {
+  } else if (liftManual) {
     setTilterVelocity(0);
+    liftManual = false;
   }
 }
 
@@ -68,7 +76,11 @@ void intakeOpcontrol() {
   if (intakeBtn.isPressed()) {
     setIntake(intakePower);
   } else if (outtakeBtn.isPressed()) {
-    setIntake(-intakePower);
+    if (liftPresetIndex == 1) {
+      setIntake(-slowIntakePower);
+    } else {
+      setIntake(-intakePower);
+    }
   } else {
     setIntake(0);
   }

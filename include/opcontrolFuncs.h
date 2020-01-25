@@ -8,11 +8,16 @@ const float tilterOutFastVelocity = 0.7;
 const float tilterInVelocity = 0.75;
 const float tilterOutPower = 1;
 const float tilterInPower = 0.5;
+const long tilterInPos = 0;
+const long tilterOutPos = 1300;
 const float liftPower = 1;
 const float intakePower = 1;
+const float slowIntakePower = 0.5;
+static bool liftManual = false;
 
 const long liftPresets[] = {0, 1500, 1900};
 const size_t liftPresetNum = sizeof(liftPresets) / sizeof(liftPresets[0]);
+static size_t liftPresetIndex = 0;
 
 void chassisOpcontrolTask(void *ignore);
 void liftOpcontrolTask(void *ignore);

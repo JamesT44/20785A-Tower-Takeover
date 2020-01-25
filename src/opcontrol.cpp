@@ -42,7 +42,7 @@ void opcontrol() {
     mainDisplay.updateOdom();
 
     if (i++ == 50) {
-      std::cout << liftMtr.getPosition() << std::endl;
+      std::cout << tilterMtr.getPosition() << std::endl;
       i = 0;
     }
     pros::delay(10);
