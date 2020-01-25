@@ -29,8 +29,8 @@ void opcontrol() {
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
-  std::string s = "Hello world";
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
+  pros::Task liftTask(liftOpcontrolTask, nullptr, "");
   int i = 0;
   while (true) {
     // Abstracted into functions
@@ -38,10 +38,11 @@ void opcontrol() {
     tilterOpcontrol();
     intakeOpcontrol();
 
+    mainDisplay.updateAuton();
     mainDisplay.updateOdom();
 
     if (i++ == 50) {
-      std::cout << chassisControl->getState().str() << std::endl;
+      std::cout << liftMtr.getPosition() << std::endl;
       i = 0;
     }
     pros::delay(10);

@@ -9,8 +9,15 @@ void setChassis(double power) {
   setChassis(power, power);
 }
 
+void setLift(long encoderTicks) {
+  liftMtr.moveAbsolute(encoderTicks, 80);
+}
+
 void setTilter(double power) {
-  tilterMtr.moveVoltage(power * maxVoltage);
+}
+
+void setTilterVelocity(double velocity) {
+  tilterController->setTarget(velocity * 100);
 }
 
 void setIntake(double power) {

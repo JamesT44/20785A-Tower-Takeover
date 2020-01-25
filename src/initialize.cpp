@@ -13,6 +13,14 @@ okapi::Motor tilterMtr = okapi::Motor(5,
                                       okapi::AbstractMotor::gearset::red,
                                       okapi::AbstractMotor::encoderUnits::counts);
 
+std::shared_ptr<okapi::AsyncVelocityController<double, double>> tilterController =
+  okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
+
+okapi::Motor liftMtr = okapi::Motor(9,
+                                    true,
+                                    okapi::AbstractMotor::gearset::red,
+                                    okapi::AbstractMotor::encoderUnits::counts);
+
 std::shared_ptr<okapi::MotorGroup> chassisLMtrs =
   std::make_shared<okapi::MotorGroup>(std::initializer_list<okapi::Motor>({1, 2}));
 std::shared_ptr<okapi::MotorGroup> chassisRMtrs =
@@ -75,6 +83,10 @@ PurePursuit pursuit = PurePursuit(chassisControl, 1.1_ft);
  */
 void initialize() {
   chassisControl->startOdomThread();
+  intakeMtrs->setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  tilterMtr.tarePosition();
+  liftMtr.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  liftMtr.tarePosition();
 }
 
 /**

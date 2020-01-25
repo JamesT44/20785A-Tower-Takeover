@@ -8,7 +8,7 @@ QUANTITY_TYPE(0, -1, 0, 0, QCurvature)
 
 constexpr QCurvature mcrvt = 1 / meter;
 
-namespace literals {
+inline namespace literals {
 constexpr QCurvature operator"" _mcrvt(long double x) {
   return QCurvature(x);
 }

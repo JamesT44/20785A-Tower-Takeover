@@ -8,7 +8,11 @@ const int maxVoltage = 12000;
 void setChassis(double leftPower, double rightPower);
 void setChassis(double power);
 
+void setLift(long encoderTicks);
+
 void setTilter(double power);
+void setTilterVelocity(double velocity);
+
 void setIntake(double power);
 
 void setLiftTarget(double degrees);
