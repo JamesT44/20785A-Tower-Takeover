@@ -3,7 +3,8 @@
 #include "okapi/api/units/RQuantity.hpp"
 #include <stdexcept>
 
-Point2D::Point2D(const okapi::QLength &x, const okapi::QLength &y) : x(x), y(y) {
+Point2D::Point2D(const okapi::QLength &x, const okapi::QLength &y)
+  : x(x), y(y) {
 }
 
 Point2D::Point2D(const okapi::OdomState &state) : x(state.x), y(state.y) {
@@ -20,7 +21,8 @@ okapi::QLength &Point2D::operator[](size_t index) {
     break;
 
   default:
-    throw std::runtime_error("Vector::at():: \"" + std::to_string(index) + "\" is invalid index");
+    throw std::runtime_error("Vector[]: \"" + std::to_string(index) +
+                             "\" is invalid index");
     break;
   }
 }
@@ -54,7 +56,9 @@ Point2D Point2D::operator/(const double scalar) const {
 }
 
 okapi::QLength Point2D::dist(const Point2D &lhs, const Point2D &rhs) {
-  return ((lhs.x - rhs.x) * (lhs.x - rhs.x) + (lhs.y - rhs.y) * (lhs.y - rhs.y)).sqrt();
+  return ((lhs.x - rhs.x) * (lhs.x - rhs.x) +
+          (lhs.y - rhs.y) * (lhs.y - rhs.y))
+    .sqrt();
 }
 
 okapi::QLength Point2D::dist(const Point2D &point) {

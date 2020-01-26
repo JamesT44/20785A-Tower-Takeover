@@ -14,9 +14,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-# PyCharm
-.idea/
-venv/
-__pycache__/
-*.csv

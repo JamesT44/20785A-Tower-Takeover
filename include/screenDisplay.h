@@ -17,11 +17,19 @@ static const char *autonOptionStrs[] = {"none",
                                         "5pt small goal",
                                         "8pt small goal",
                                         "skills"};
-static const lv_img_dsc_t *autonOptionImgs[][5] = {
-  {&auton_none, &auton_blue_1pt, &auton_blue_5pt_small, &auton_blue_8pt_small, &auton_none},
-  {&auton_none, &auton_red_1pt, &auton_red_5pt_small, &auton_red_8pt_small, &auton_none}};
+static const lv_img_dsc_t *autonOptionImgs[][5] = {{&auton_none,
+                                                    &auton_blue_1pt,
+                                                    &auton_blue_5pt_small,
+                                                    &auton_blue_8pt_small,
+                                                    &auton_none},
+                                                   {&auton_none,
+                                                    &auton_red_1pt,
+                                                    &auton_red_5pt_small,
+                                                    &auton_red_8pt_small,
+                                                    &auton_none}};
 
-static const char *odomBtnmMap[] = {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
+static const char *odomBtnmMap[] =
+  {"\203Reset", "\n", "\201X+", "\201Y+", "\201Turn", ""};
 
 static const double robotWidth = (12.5_in).convert(okapi::foot);
 static const double robotLength = (18_in).convert(okapi::foot);
@@ -31,12 +39,30 @@ static const double odomImgScale = 216.0 / 12.0;
 
 class ScreenDisplay {
   public:
-  ScreenDisplay(lv_obj_t *parent, const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
+  /**
+   * Main GUI for the robot. Contains multiple tabs and there should only
+   * be one instance of this class.
+   * @param parent    the lvgl object to draw the screen within
+   * @param robotOdom the odomChassisController instance to use for the
+   * odomTab
+   */
+  ScreenDisplay(
+    lv_obj_t *parent,
+    const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
+
   ~ScreenDisplay();
 
   std::pair<bool, char *> getAutonSelection();
   void updateAuton();
+
+  /**
+   * Refresh the odometry tab. Redraws the label and robot line.
+   */
   void updateOdom();
+
+  /**
+   * @return The internal OdomChassisController
+   */
   std::shared_ptr<okapi::OdomChassisController> getRobotController();
 
   protected:
@@ -50,7 +76,14 @@ class ScreenDisplay {
   lv_obj_t *tabview;
   lv_obj_t *odomStatusLabel;
   lv_obj_t *robotLine;
-  std::vector<lv_point_t> robotPoints = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+  std::vector<lv_point_t> robotPoints =
+    {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 };
 
+/**
+ * Callback action for the button matrix on the odometry tabs
+ * @param  btnm the button matrix that was pressed
+ * @param  text the label on the button that was pressed
+ * @return      result of callback
+ */
 lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text);

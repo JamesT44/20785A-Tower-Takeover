@@ -2,6 +2,9 @@
 
 #include "main.h"
 
+/**
+ * A 2D Point with some basic operations
+ */
 class Point2D {
   public:
   okapi::QLength x{0_ft};
