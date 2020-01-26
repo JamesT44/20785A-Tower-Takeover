@@ -2,10 +2,11 @@
 #include "main.h"
 #include <cmath>
 
-CustomOdometry::CustomOdometry(const okapi::TimeUtil &itimeUtil,
-                               const std::shared_ptr<okapi::ReadOnlyChassisModel> &imodel,
-                               const okapi::ChassisScales &ichassisScales,
-                               const std::shared_ptr<okapi::Logger> &ilogger)
+CustomOdometry::CustomOdometry(
+  const okapi::TimeUtil &itimeUtil,
+  const std::shared_ptr<okapi::ReadOnlyChassisModel> &imodel,
+  const okapi::ChassisScales &ichassisScales,
+  const std::shared_ptr<okapi::Logger> &ilogger)
   : logger(ilogger),
     rate(itimeUtil.getRate()),
     timer(itimeUtil.getTimer()),
@@ -13,7 +14,8 @@ CustomOdometry::CustomOdometry(const okapi::TimeUtil &itimeUtil,
     chassisScales(ichassisScales) {
 }
 
-void CustomOdometry::setScales(const okapi::ChassisScales &ichassisScales) {
+void CustomOdometry::setScales(
+  const okapi::ChassisScales &ichassisScales) {
   chassisScales = ichassisScales;
 }
 
@@ -33,10 +35,12 @@ void CustomOdometry::step() {
   }
 }
 
-okapi::OdomState CustomOdometry::odomMathStep(const std::valarray<std::int32_t> &itickDiff,
-                                              const okapi::QTime &) {
+okapi::OdomState
+CustomOdometry::odomMathStep(const std::valarray<std::int32_t> &itickDiff,
+                             const okapi::QTime &) {
   if (itickDiff.size() < 3) {
-    LOG_ERROR_S("CustomOdometry: itickDiff did not have at least two elements.");
+    LOG_ERROR_S(
+      "CustomOdometry: itickDiff did not have at least two elements.");
     return okapi::OdomState{};
   }
 
@@ -44,55 +48,71 @@ okapi::OdomState CustomOdometry::odomMathStep(const std::valarray<std::int32_t> 
     if (std::abs(elem) > maximumTickDiff) {
       LOG_ERROR("CustomOdometry: A tick diff (" + std::to_string(elem) +
                 ") was greater than the maximum allowable diff (" +
-                std::to_string(maximumTickDiff) + "). Skipping this odometry step.");
+                std::to_string(maximumTickDiff) +
+                "). Skipping this odometry step.");
       return okapi::OdomState{};
     }
   }
 
-  const double deltaL = itickDiff[0] / chassisScales.straight;
-  const double deltaR = itickDiff[1] / chassisScales.straight;
+  // Calculate distance travelled by wheels
+  const okapi::QLength deltaL =
+    itickDiff[0] / chassisScales.tpr * chassisScales.wheelDiameter * 1_pi;
+  const okapi::QLength deltaR =
+    itickDiff[1] / chassisScales.tpr * chassisScales.wheelDiameter * 1_pi;
+  const okapi::QLength deltaM = itickDiff[2] / chassisScales.tpr *
+                                chassisScales.middleWheelDiameter * 1_pi;
 
-  double deltaTheta = (deltaL - deltaR) / chassisScales.wheelTrack.convert(okapi::meter);
-  double localOffX, localOffY;
+  // Calculate angle travelled
+  double deltaTheta =
+    ((deltaL - deltaR) / chassisScales.wheelTrack).convert(okapi::number);
 
-  const auto deltaM = static_cast<const double>(
-    itickDiff[2] / chassisScales.middle -
-    ((deltaTheta / 2_pi) * 1_pi * chassisScales.middleWheelDistance.convert(okapi::meter) * 2));
+  // Calculate displacement of middle wheel
+  const okapi::QLength deltaMiddle =
+    deltaM - deltaTheta * chassisScales.middleWheelDistance;
 
+  // Calculate robot-centric local offset
+  okapi::QLength localOffX, localOffY;
   if (deltaL == deltaR) {
     localOffX = deltaM;
     localOffY = deltaR;
   } else {
-    localOffX = 2 * sin(deltaTheta / 2) *
-                (deltaM / deltaTheta + chassisScales.middleWheelDistance.convert(okapi::meter) * 2);
+    localOffX =
+      2 * sin(deltaTheta / 2) *
+      (deltaMiddle / deltaTheta + chassisScales.middleWheelDistance * 2);
     localOffY = 2 * sin(deltaTheta / 2) *
-                (deltaR / deltaTheta + chassisScales.wheelTrack.convert(okapi::meter) / 2);
+                (deltaR / deltaTheta + chassisScales.wheelTrack / 2);
   }
 
+  // Find average heading during motion
   double avgA = state.theta.convert(okapi::radian) + (deltaTheta / 2);
 
-  double polarR = sqrt((localOffX * localOffX) + (localOffY * localOffY));
-  double polarA = atan2(localOffY, localOffX) - avgA;
+  // Convert local offset to global offset (by converting to polar
+  // coordinates)
+  okapi::QLength polarR =
+    ((localOffX * localOffX) + (localOffY * localOffY)).sqrt();
+  double polarA = atan2(localOffY.convert(okapi::meter),
+                        localOffX.convert(okapi::meter)) -
+                  avgA;
+  okapi::QLength dX = sin(polarA) * polarR;
+  okapi::QLength dY = cos(polarA) * polarR;
 
-  double dX = sin(polarA) * polarR;
-  double dY = cos(polarA) * polarR;
-
-  if (isnan(dX)) {
-    dX = 0;
+  if (isnan(dX.convert(okapi::meter))) {
+    dX = 0_m;
   }
 
-  if (isnan(dY)) {
-    dY = 0;
+  if (isnan(dY.convert(okapi::meter))) {
+    dY = 0_m;
   }
 
   if (isnan(deltaTheta)) {
     deltaTheta = 0;
   }
 
-  return okapi::OdomState{dX * okapi::meter, dY * okapi::meter, deltaTheta * okapi::radian};
+  return okapi::OdomState{dX, dY, deltaTheta * okapi::radian};
 }
 
-okapi::OdomState CustomOdometry::getState(const okapi::StateMode &imode) const {
+okapi::OdomState
+CustomOdometry::getState(const okapi::StateMode &imode) const {
   if (imode == okapi::StateMode::FRAME_TRANSFORMATION) {
     return state;
   } else {
@@ -100,7 +120,8 @@ okapi::OdomState CustomOdometry::getState(const okapi::StateMode &imode) const {
   }
 }
 
-void CustomOdometry::setState(const okapi::OdomState &istate, const okapi::StateMode &imode) {
+void CustomOdometry::setState(const okapi::OdomState &istate,
+                              const okapi::StateMode &imode) {
   LOG_DEBUG("State set to: " + istate.str());
   if (imode == okapi::StateMode::FRAME_TRANSFORMATION) {
     state = istate;

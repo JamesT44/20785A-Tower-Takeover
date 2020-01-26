@@ -14,21 +14,25 @@ Path2D::Path2D(std::vector<Point2D> &&path) {
   });
 }
 
-std::vector<std::shared_ptr<Point2D>> &Path2D::getPoints() {
+const Path2D::points_t &Path2D::getPointsVector() const {
+  return points;
+}
+
+Path2D::points_t &Path2D::pointsVector() {
   return points;
 }
 
 Path2D Path2D::copy() const {
   Path2D temp;
-  temp.getPoints().reserve(points.size());
+  temp.pointsVector().reserve(points.size());
   for (auto &&point : points) {
-    temp.getPoints().emplace_back(std::make_shared<Point2D>(*point));
+    temp.pointsVector().emplace_back(std::make_shared<Point2D>(*point));
   }
   return temp;
 }
 
 void Path2D::interpolate(const okapi::QLength &resolution) {
-  std::vector<std::shared_ptr<Point2D>> temp;
+  points_t temp;
   temp.reserve(points.size());
 
   for (size_t i = 0; i < points.size() - 1; i++) {
@@ -38,7 +42,6 @@ void Path2D::interpolate(const okapi::QLength &resolution) {
     Point2D diff = end - start;
     size_t steps = std::ceil((Point2D::magnitude(diff) / resolution).convert(okapi::number));
     Point2D step = diff / steps;
-
     temp.reserve(temp.size() + steps);
     for (size_t j = 0; j < steps; j++) {
       temp.emplace_back(std::make_shared<Point2D>(start + (step * j)));

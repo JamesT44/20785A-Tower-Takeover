@@ -1,59 +1,49 @@
-#include "debugScreen.h"
 #include "deviceConfig.h"
 #include "main.h"
 #include "opcontrolFuncs.h"
-#include "path2D.h"
+#include "pros/apix.h"
+#include "pros/rtos.hpp"
+#include "purePursuit.h"
+#include "screenDisplay.h"
 #include "trajectory2D.h"
-#include <fstream>
 
 /**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
+ * Runs the operator control code. This function will be started in its own
+ * task with the default priority and stack size whenever the robot is
+ * enabled via the Field Management System or the VEX Competition Switch in
+ * the operator control mode.
  *
- * If no competition control is connected, this function will run immediately
- * following initialize().
+ * If no competition control is connected, this function will run
+ * immediately following initialize().
  *
  * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
+ * operator control task will be stopped. Re-enabling the robot will
+ * restart the task, not resume it from where it left off.
  */
 void opcontrol() {
+  auto start = pros::millis();
+  pros::delay(500);
 
-  // auto start = pros::millis();
-  // auto path = Trajectory2D({{0_ft, 0_ft}, {0_ft, 2_ft}, {2_ft, 4_ft}, {4_ft, 2_ft}, {2_ft, 2_ft}})
-  //               .withInterpolation(1_cm)
-  //               .withSmoothening(0.9, 1000)
-  //               .generateTrajectory(0.75_mps, 0.4_mps2, 3_Hz);
-  // std::cout << pros::millis() - start << std::endl;
-
-  // auto points = path.getPoints();
-  // auto curvatures = path.getCurvatures();
-  // auto velocities = path.getVelocities();
-  // std::ofstream file;
-  // file.open("/usd/path.txt");
-  // for (size_t i = 0; i < points.size(); i++) {
-  //   file << points[i]->x.convert(okapi::meter) << "," << points[i]->y.convert(okapi::meter) <<
-  //   ","
-  //        << curvatures[i].convert(okapi::mcrvt) << "," << velocities[i].convert(okapi::mps) <<
-  //        "\n";
-  // }
-  // file.close();
-
-  // int i = 0;
+  // auto path = Trajectory2D();
+  // auto res = path.loadFromSD("test");
+  // std::cout << "res: " << (int)res << std::endl;
+  // std::cout << "elapsed: " << pros::millis() - start << std::endl;
+  // path.saveToSD("test2");
+  pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
+  pros::Task liftTask(liftOpcontrolTask, nullptr, "");
+  int i = 0;
   while (true) {
     // Abstracted into functions
-    chassisOpcontrol();
     tilterOpcontrol();
     intakeOpcontrol();
 
-    debugDisplay.updateOdom();
+    mainDisplay.updateAuton();
+    mainDisplay.updateOdom();
 
-    // if (i++ == 50) {
-    //   std::cout << chassisControl->getState().str() << std::endl;
-    //   i = 0;
-    // }
+    if (i++ == 50) {
+      std::cout << tilterMtr.getPosition() << std::endl;
+      i = 0;
+    }
     pros::delay(10);
   }
 }

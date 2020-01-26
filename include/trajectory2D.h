@@ -8,7 +8,7 @@ QUANTITY_TYPE(0, -1, 0, 0, QCurvature)
 
 constexpr QCurvature mcrvt = 1 / meter;
 
-namespace literals {
+inline namespace literals {
 constexpr QCurvature operator"" _mcrvt(long double x) {
   return QCurvature(x);
 }
@@ -18,6 +18,8 @@ constexpr QCurvature operator"" _mcrvt(long double x) {
 
 class Trajectory2D : public Path2D {
   public:
+  enum class SDCardRes { success = 0, noSDCard = 1, cannotOpenFile = 2, invalidDataFormat = 3 };
+
   Trajectory2D() = default;
   Trajectory2D(const Trajectory2D &path) = default;
   Trajectory2D(Trajectory2D &&path) = default;
@@ -30,8 +32,11 @@ class Trajectory2D : public Path2D {
   Trajectory2D &operator=(const Trajectory2D &path) = default;
   Trajectory2D &operator=(Trajectory2D &&path) = default;
 
-  std::vector<okapi::QCurvature> &getCurvatures();
-  std::vector<okapi::QSpeed> &getVelocities();
+  const std::vector<okapi::QCurvature> &getCurvaturesVector() const;
+  std::vector<okapi::QCurvature> &curvaturesVector();
+
+  const std::vector<okapi::QSpeed> &getVelocitiesVector() const;
+  std::vector<okapi::QSpeed> &velocitiesVector();
 
   Trajectory2D copy() const;
 
@@ -42,6 +47,9 @@ class Trajectory2D : public Path2D {
   Trajectory2D &withInterpolation(const okapi::QLength &resolution);
   Trajectory2D &withSmoothening(double weight, int iterations);
 
+  SDCardRes saveToSD(const std::string &identifier);
+  SDCardRes loadFromSD(const std::string &identifier);
+
   protected:
   std::vector<okapi::QCurvature> curvatures;
   std::vector<okapi::QSpeed> velocities;
@@ -50,4 +58,6 @@ class Trajectory2D : public Path2D {
   void setVelocities(const okapi::QSpeed &maxVel,
                      const okapi::QAcceleration &maxDecel,
                      const okapi::QFrequency &kTurn);
+
+  bool SDCardInserted();
 };
