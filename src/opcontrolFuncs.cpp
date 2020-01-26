@@ -22,8 +22,9 @@ void chassisOpcontrolTask(void *ignore) {
     if (backwardBtn.isPressed()) {
       setChassis(-0.25);
     } else {
-      setChassis(mainController.getAnalog(okapi::ControllerAnalog::leftY),
-                 mainController.getAnalog(okapi::ControllerAnalog::rightY));
+      setChassis(
+        mainController.getAnalog(okapi::ControllerAnalog::leftY),
+        mainController.getAnalog(okapi::ControllerAnalog::rightY));
     }
 
     pros::delay(10);

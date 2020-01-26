@@ -18,7 +18,12 @@ constexpr QCurvature operator"" _mcrvt(long double x) {
 
 class Trajectory2D : public Path2D {
   public:
-  enum class SDCardRes { success = 0, noSDCard = 1, cannotOpenFile = 2, invalidDataFormat = 3 };
+  enum class SDCardRes {
+    success = 0,
+    noSDCard = 1,
+    cannotOpenFile = 2,
+    invalidDataFormat = 3
+  };
 
   Trajectory2D() = default;
   Trajectory2D(const Trajectory2D &path) = default;

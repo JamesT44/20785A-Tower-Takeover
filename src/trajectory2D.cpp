@@ -1,13 +1,15 @@
 #include "trajectory2D.h"
 #include <fstream>
 
-Trajectory2D::Trajectory2D(const std::vector<Point2D> &path) : Path2D{path} {
+Trajectory2D::Trajectory2D(const std::vector<Point2D> &path)
+  : Path2D{path} {
 }
 
 Trajectory2D::Trajectory2D(std::vector<Point2D> &&path) : Path2D{path} {
 }
 
-const std::vector<okapi::QCurvature> &Trajectory2D::getCurvaturesVector() const {
+const std::vector<okapi::QCurvature> &
+Trajectory2D::getCurvaturesVector() const {
   return curvatures;
 }
 
@@ -15,7 +17,8 @@ std::vector<okapi::QCurvature> &Trajectory2D::curvaturesVector() {
   return curvatures;
 }
 
-const std::vector<okapi::QSpeed> &Trajectory2D::getVelocitiesVector() const {
+const std::vector<okapi::QSpeed> &
+Trajectory2D::getVelocitiesVector() const {
   return velocities;
 }
 
@@ -43,26 +46,30 @@ Trajectory2D Trajectory2D::copy() const {
   return temp;
 }
 
-Trajectory2D &Trajectory2D::generateTrajectory(const okapi::QSpeed &maxVel,
-                                               const okapi::QAcceleration &maxDecel,
-                                               const okapi::QFrequency &kTurn) {
+Trajectory2D &
+Trajectory2D::generateTrajectory(const okapi::QSpeed &maxVel,
+                                 const okapi::QAcceleration &maxDecel,
+                                 const okapi::QFrequency &kTurn) {
   setCurvatures();
   setVelocities(maxVel, maxDecel, kTurn);
 
   return *this;
 }
 
-Trajectory2D &Trajectory2D::withInterpolation(const okapi::QLength &resolution) {
+Trajectory2D &
+Trajectory2D::withInterpolation(const okapi::QLength &resolution) {
   interpolate(resolution);
   return *this;
 }
 
-Trajectory2D &Trajectory2D::withSmoothening(double weight, int iterations) {
+Trajectory2D &Trajectory2D::withSmoothening(double weight,
+                                            int iterations) {
   smoothen(weight, iterations);
   return *this;
 }
 
-Trajectory2D::SDCardRes Trajectory2D::saveToSD(const std::string &identifier) {
+Trajectory2D::SDCardRes
+Trajectory2D::saveToSD(const std::string &identifier) {
   if (!SDCardInserted()) {
     return Trajectory2D::SDCardRes::noSDCard;
   }
@@ -73,15 +80,18 @@ Trajectory2D::SDCardRes Trajectory2D::saveToSD(const std::string &identifier) {
   }
 
   for (size_t i = 0; i < points.size(); i++) {
-    f << points[i]->x.convert(okapi::meter) << "," << points[i]->y.convert(okapi::meter) << ","
-      << curvatures[i].convert(okapi::mcrvt) << "," << velocities[i].convert(okapi::mps) << "\n";
+    f << points[i]->x.convert(okapi::meter) << ","
+      << points[i]->y.convert(okapi::meter) << ","
+      << curvatures[i].convert(okapi::mcrvt) << ","
+      << velocities[i].convert(okapi::mps) << "\n";
   }
   f.close();
 
   return Trajectory2D::SDCardRes::success;
 }
 
-Trajectory2D::SDCardRes Trajectory2D::loadFromSD(const std::string &identifier) {
+Trajectory2D::SDCardRes
+Trajectory2D::loadFromSD(const std::string &identifier) {
   if (!SDCardInserted()) {
     return Trajectory2D::SDCardRes::noSDCard;
   }
@@ -111,8 +121,9 @@ Trajectory2D::SDCardRes Trajectory2D::loadFromSD(const std::string &identifier) 
       return Trajectory2D::SDCardRes::invalidDataFormat;
     }
 
-    points.emplace_back(std::make_shared<Point2D>(std::stod(parts[0]) * okapi::meter,
-                                                  std::stod(parts[1]) * okapi::meter));
+    points.emplace_back(
+      std::make_shared<Point2D>(std::stod(parts[0]) * okapi::meter,
+                                std::stod(parts[1]) * okapi::meter));
     curvatures.emplace_back(std::stod(parts[2]) * okapi::mcrvt);
     velocities.emplace_back(std::stod(parts[3]) * okapi::mps);
 
@@ -135,9 +146,11 @@ void Trajectory2D::setCurvatures() {
     okapi::QVolume abc = a * b * c;
     okapi::QLength s = (a + b + c) / 2;
     auto area2 = s * (s - a) * (s - b) * (s - c);
-    okapi::QArea area = area2.getValue() > 0.0 ? area2.sqrt() : 0.0_m * 0.0_m;
+    okapi::QArea area =
+      area2.getValue() > 0.0 ? area2.sqrt() : 0.0_m * 0.0_m;
 
-    okapi::QCurvature curvature = abc.getValue() ? 4 * area / abc : 0.0_mcrvt;
+    okapi::QCurvature curvature =
+      abc.getValue() ? 4 * area / abc : 0.0_mcrvt;
 
     curvatures.emplace_back(curvature);
   }
@@ -151,11 +164,13 @@ void Trajectory2D::setVelocities(const okapi::QSpeed &maxVel,
   pros::delay(500);
   velocities.back() = 0_mps;
   for (int i = points.size() - 2; i >= 0; i--) {
-    okapi::QSpeed targetVel = curvatures[i].getValue() ? kTurn / curvatures[i] : maxVel;
+    okapi::QSpeed targetVel =
+      curvatures[i].getValue() ? kTurn / curvatures[i] : maxVel;
     okapi::QLength distance = points[i]->dist(*points[i + 1]);
 
     okapi::QSpeed decelLimited =
-      (velocities[i + 1] * velocities[i + 1] + 2.0 * maxDecel * distance).sqrt();
+      (velocities[i + 1] * velocities[i + 1] + 2.0 * maxDecel * distance)
+        .sqrt();
 
     velocities[i] = std::min(std::min(targetVel, decelLimited), maxVel);
   }

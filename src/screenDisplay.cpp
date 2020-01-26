@@ -41,7 +41,7 @@ ScreenDisplay::ScreenDisplay(
   }
 
   lv_roller_set_options(autonRoller, autonRollerOptions.c_str());
-  lv_roller_set_selected(autonRoller, 0, false);
+  lv_roller_set_selected(autonRoller, 2, false);
   lv_obj_set_height(autonRoller, 150);
 
   autonImg = lv_img_create(autonTab, NULL);

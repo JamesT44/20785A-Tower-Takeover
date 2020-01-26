@@ -52,7 +52,15 @@ class ScreenDisplay {
 
   ~ScreenDisplay();
 
+  /**
+   * @return The autonomous selection. The bool is true if red. The char *
+   * is the string of the currently selected routine.
+   */
   std::pair<bool, char *> getAutonSelection();
+
+  /**
+   * Refresh the auton tab. Redraws the image.
+   */
   void updateAuton();
 
   /**
