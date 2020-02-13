@@ -160,7 +160,7 @@ lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text) {
   okapi::OdomState state = chassisControl->getState();
 
   if (strcmp(text, "Reset") == 0) {
-    robotModel->resetSensors();
+    chassisControl->getModel()->resetSensors();
     pros::delay(20);
     chassisControl->setState({0_ft, 0_ft, 0_deg});
   } else if (strcmp(text, "X+") == 0) {

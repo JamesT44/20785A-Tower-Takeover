@@ -14,40 +14,49 @@
  * re-start it from where it left off.
  */
 void autonomous() {
-  // auto choice = mainDisplay.getAutonSelection();
-  // if (strcmp(choice.second, "5pt small goal") || true) {
-  chassisControl->setMaxVelocity(80);
+  bool blue = false;
+  chassisControl->setMaxVelocity(130);
+  // chassisControl->moveDistanceAsync(1_ft);
+  // chassisControl->waitUntilSettled();
+  // chassisControl->moveDistance(-1_ft);
+  // chassisControl->waitUntilSettled();
+  tilterMtr.moveAbsolute(1600, 200);
+  while (tilterMtr.getPosition() < 1350) {
+    pros::delay(10);
+  }
   setIntake(-1);
   pros::delay(500);
-  // chassisControl->moveDistance(1.2_ft);
-  liftMtr.moveAbsolute(300, 100);
-  while (liftMtr.getPosition() < 290) {
+  setLift(1900);
+  while (liftMtr.getPosition() < 1800) {
     pros::delay(10);
   }
-  // chassisControl->moveDistance(-0.7_ft);
-  liftMtr.moveAbsolute(0, 100);
+  tilterMtr.moveAbsolute(300, 200);
+  while (tilterMtr.getPosition() > 600) {
+    pros::delay(10);
+  }
+  setLift(0);
   setIntake(1);
-  while (liftMtr.getPosition() > 10) {
-    pros::delay(10);
-  }
-  chassisControl->moveDistance(4_ft);
-  setIntake(0);
-  chassisControl->moveDistance(-2.3_ft);
-  chassisControl->turnAngle(135_deg);
-  chassisControl->moveDistance(1.2_ft);
-  setIntake(-0.5);
   pros::delay(500);
+  setIntake(0.75);
+  chassisControl->setMaxVelocity(80);
+  chassisControl->moveDistance(3.5_ft);
+  chassisControl->setMaxVelocity(120);
+  chassisControl->moveDistance(-1.60_ft);
+  chassisControl->turnAngle((blue ? -1 : 1) * 135_deg);
+  setChassis(0.75);
+  pros::delay(1000);
+  setChassis(0);
   setIntake(0);
+  chassisControl->moveDistance(-0.15_ft);
   setTilterVelocity(1);
-  while (tilterMtr.getPosition() < 2300) {
+  while (tilterMtr.getPosition() < 2000) {
     pros::delay(10);
   }
-  setTilterVelocity(0.5);
-  while (tilterMtr.getPosition() < 5300) {
+  setTilterVelocity(0.4);
+  while (tilterMtr.getPosition() < 4500) {
     pros::delay(10);
   }
   setTilterVelocity(0);
-  chassisControl->moveDistance(-1.2_ft);
+  chassisControl->moveDistance(-1.35_ft);
   tilterMtr.moveAbsolute(0, 100);
-  // }
 }

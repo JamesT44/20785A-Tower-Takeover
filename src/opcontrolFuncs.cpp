@@ -13,7 +13,7 @@ okapi::ControllerButton liftDownBtn(okapi::ControllerDigital::L2);
 okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 
-okapi::ControllerButton pursuitTestBtn(okapi::ControllerDigital::X);
+okapi::ControllerButton deployBtn(okapi::ControllerDigital::B);
 okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrolTask(void *ignore) {
@@ -34,20 +34,38 @@ void chassisOpcontrolTask(void *ignore) {
 void liftOpcontrolTask(void *ignore) {
   setLift(liftPresets[liftPresetIndex]);
   while (true) {
-    if (liftUpBtn.changedToReleased()) {
+    if (deployBtn.isPressed()) {
+      tilterMtr.moveAbsolute(1600, 200);
+      while (tilterMtr.getPosition() < 1350) {
+        pros::delay(10);
+      }
+      setIntake(-1);
+      pros::delay(500);
+      setLift(1900);
+      while (liftMtr.getPosition() < 1800) {
+        pros::delay(10);
+      }
+      tilterMtr.moveAbsolute(300, 200);
+      while (tilterMtr.getPosition() > 600) {
+        pros::delay(10);
+      }
+      setLift(0);
+      setIntake(1);
+    } else if (liftUpBtn.changedToReleased()) {
       if (liftPresetIndex < liftPresetNum - 1) {
-        if (liftPresetIndex == 0) {
-          tilterMtr.moveAbsolute(tilterOutPos, 100);
-        }
+        // tilterPrevPos = tilterMtr.getPosition();
+        // if (liftPresetIndex == 0) {
+        //   tilterMtr.moveAbsolute(tilterOutPos, 100);
+        // }
         liftPresetIndex += 1;
         setLift(liftPresets[liftPresetIndex]);
       }
     } else if (liftDownBtn.changedToReleased()) {
       if (liftPresetIndex > 0) {
         liftPresetIndex -= 1;
-        if (liftPresetIndex == 0) {
-          tilterMtr.moveAbsolute(tilterInPos, 100);
-        }
+        // if (liftPresetIndex == 0) {
+        //   tilterMtr.moveAbsolute(tilterPrevPos, 100);
+        // }
         setLift(liftPresets[liftPresetIndex]);
       }
     }
@@ -59,7 +77,7 @@ void liftOpcontrolTask(void *ignore) {
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
     liftManual = true;
-    if (tilterMtr.getPosition() > 2300) {
+    if (tilterMtr.getPosition() > 2000) {
       setTilterVelocity(tilterOutSlowVelocity);
     } else {
       setTilterVelocity(tilterOutFastVelocity);
@@ -84,5 +102,8 @@ void intakeOpcontrol() {
     }
   } else {
     setIntake(0);
+  }
+  if (deployBtn.isPressed()) {
+    pros::delay(1500);
   }
 }
