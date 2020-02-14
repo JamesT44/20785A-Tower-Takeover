@@ -43,9 +43,7 @@ void opcontrol() {
     mainDisplay.updateOdom();
 
     if (i++ == 50) {
-      std::cout << chassisControl->getState().str() << std::endl;
-      std::cout << chassisControl->getModel()->getSensorVals()[0]
-                << std::endl;
+      std::cout << tilterMtr.getPosition() << std::endl;
       i = 0;
     }
     pros::delay(10);

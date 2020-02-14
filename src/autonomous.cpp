@@ -16,33 +16,30 @@
 void autonomous() {
   bool blue = false;
   chassisControl->setMaxVelocity(130);
-  // chassisControl->moveDistanceAsync(1_ft);
-  // chassisControl->waitUntilSettled();
-  // chassisControl->moveDistance(-1_ft);
-  // chassisControl->waitUntilSettled();
-  tilterMtr.moveAbsolute(1600, 200);
-  while (tilterMtr.getPosition() < 1350) {
+  tilterMtr.moveAbsolute(3250, 100);
+  while (tilterMtr.getPosition() < 3000) {
+    pros::delay(10);
+  }
+  setLift(1900);
+  tilterMtr.moveAbsolute(1500, 100);
+  while (tilterMtr.getPosition() > 1750) {
+    pros::delay(10);
+  }
+  while (liftMtr.getPosition() < 1700) {
     pros::delay(10);
   }
   setIntake(-1);
-  pros::delay(500);
-  setLift(1900);
-  while (liftMtr.getPosition() < 1800) {
-    pros::delay(10);
-  }
-  tilterMtr.moveAbsolute(300, 200);
-  while (tilterMtr.getPosition() > 600) {
-    pros::delay(10);
-  }
+  pros::delay(1000);
   setLift(0);
   setIntake(1);
-  pros::delay(500);
-  setIntake(0.75);
-  chassisControl->setMaxVelocity(80);
+  pros::delay(1000);
+  chassisControl->setMaxVelocity(110);
   chassisControl->moveDistance(3.5_ft);
-  chassisControl->setMaxVelocity(120);
-  chassisControl->moveDistance(-1.60_ft);
-  chassisControl->turnAngle((blue ? -1 : 1) * 135_deg);
+  chassisControl->setMaxVelocity(150);
+  chassisControl->turnAngle((blue ? -1 : 1) * -35_deg);
+  chassisControl->moveDistance(0.5_ft);
+  chassisControl->moveDistance(-4_ft);
+  chassisControl->turnAngle((blue ? -1 : 1) * 170_deg);
   setChassis(0.75);
   pros::delay(1000);
   setChassis(0);

@@ -11,9 +11,8 @@ okapi::Motor tilterMtr =
                okapi::AbstractMotor::gearset::red,
                okapi::AbstractMotor::encoderUnits::counts);
 
-std::shared_ptr<okapi::AsyncVelocityController<double, double>>
-  tilterController =
-    okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
+// std::shared_ptr<okapi::AsyncVelIntegratedController> tilterController =
+//   okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
 
 okapi::Motor liftMtr =
   okapi::Motor(9,

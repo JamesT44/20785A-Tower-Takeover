@@ -14,113 +14,50 @@
  * re-start it from where it left off.
  */
 void autonomous() {
-  bool blue = false;
-  chassisControl->moveDistance(1_ft);
-  chassisControl->moveDistance(-1_ft);
-  setIntake(-1);
-  pros::delay(500);
-  setIntake(0);
-  liftMtr.moveAbsolute(300, 100);
-  while (liftMtr.getPosition() < 290) {
-    pros::delay(10);
-  }
-  // chassisControl->moveDistance(-0.7_ft);
-  liftMtr.moveAbsolute(0, 100);
-  // auto choice = mainDisplay.getAutonSelection();
-  // if (strcmp(choice.second, "5pt small goal") || true) {
-  // if (!blue) {
-  //   chassisControl->setMaxVelocity(100);
-  //   chassisControl->moveDistanceAsync(1.65_ft);
-  //   setIntake(-1);
-  //   pros::delay(500);
-  //   setIntake(0);
-  //   chassisControl->waitUntilSettled();
-  //   // chassisControl->moveDistance(1.2_ft);
-  //   chassisControl->moveDistanceAsync(-1.25_ft);
-  //   pros::delay(500);
-  //   liftMtr.moveAbsolute(300, 100);
-  //   while (liftMtr.getPosition() < 290) {
-  //     pros::delay(10);
-  //   }
-  //   // chassisControl->moveDistance(-0.7_ft);
-  //   liftMtr.moveAbsolute(0, 100);
-  //   while (liftMtr.getPosition() > 20) {
-  //     pros::delay(10);
-  //   }
-  //   chassisControl->waitUntilSettled();
-  //   setIntake(1);
-  //   chassisControl->setMaxVelocity(70);
-  //   chassisControl->moveDistance(3.5_ft);
-  //   chassisControl->setMaxVelocity(100);
-  //   chassisControl->moveDistanceAsync(-1.85_ft);
-  //   pros::delay(1000);
-  //   setIntake(0);
-  //   chassisControl->waitUntilSettled();
-  //   chassisControl->turnAngle(135_deg);
-  //   setChassis(0.45);
-  //   // setIntake(-0.5);
-  //   pros::delay(250);
-  //   // setIntake(0);
-  //   pros::delay(1250);
-  //   setChassis(0);
-  //   chassisControl->moveDistance(-0.15_ft);
-  //   setTilterVelocity(1);
-  //   while (tilterMtr.getPosition() < 2300) {
-  //     pros::delay(10);
-  //   }
-  //   setTilterVelocity(0.5);
-  //   while (tilterMtr.getPosition() < 4700) {
-  //     pros::delay(10);
-  //   }
-  //   setTilterVelocity(0);
-  //   chassisControl->moveDistance(-1.35_ft);
-  //   tilterMtr.moveAbsolute(0, 100);
-  // } else {
-  //   chassisControl->setMaxVelocity(100);
-  //   chassisControl->moveDistanceAsync(1.65_ft);
-  //   setIntake(-1);
-  //   pros::delay(500);
-  //   setIntake(0);
-  //   chassisControl->waitUntilSettled();
-  //   // chassisControl->moveDistance(1.2_ft);
-  //   chassisControl->moveDistanceAsync(-1.25_ft);
-  //   pros::delay(500);
-  //   liftMtr.moveAbsolute(300, 100);
-  //   while (liftMtr.getPosition() < 290) {
-  //     pros::delay(10);
-  //   }
-  //   // chassisControl->moveDistance(-0.7_ft);
-  //   liftMtr.moveAbsolute(0, 100);
-  //   while (liftMtr.getPosition() > 20) {
-  //     pros::delay(10);
-  //   }
-  //   chassisControl->waitUntilSettled();
-  //   setIntake(1);
-  //   chassisControl->setMaxVelocity(70);
-  //   chassisControl->moveDistance(3.6_ft);
-  //   chassisControl->setMaxVelocity(100);
-  //   chassisControl->moveDistanceAsync(-2.1_ft);
-  //   pros::delay(1000);
-  //   setIntake(0);
-  //   chassisControl->waitUntilSettled();
-  //   chassisControl->turnAngle(-135_deg);
-  //   setChassis(0.45);
-  //   setIntake(-0.5);
-  //   pros::delay(250);
-  //   setIntake(0);
-  //   pros::delay(1250);
-  //   setChassis(0);
-  //   chassisControl->moveDistance(-0.15_ft);
-  //   setTilterVelocity(1);
-  //   while (tilterMtr.getPosition() < 2300) {
-  //     pros::delay(10);
-  //   }
-  //   setTilterVelocity(0.5);
-  //   while (tilterMtr.getPosition() < 5100) {
-  //     pros::delay(10);
-  //   }
-  //   setTilterVelocity(0);
-  //   chassisControl->moveDistance(-1.35_ft);
-  //   tilterMtr.moveAbsolute(0, 100);
-  // }
+bool blue = false;
+chassisControl->setMaxVelocity(130);
+// chassisControl->moveDistanceAsync(1_ft);
+// chassisControl->waitUntilSettled();
+// chassisControl->moveDistance(-1_ft);
+// chassisControl->waitUntilSettled();
+tilterMtr.moveAbsolute(3250, 100);
+while (tilterMtr.getPosition() < 3000) {
+  pros::delay(10);
+}
+setLift(1900);
+tilterMtr.moveAbsolute(1500, 100);
+while (tilterMtr.getPosition() > 1750) {
+  pros::delay(10);
+}
+while (liftMtr.getPosition() < 1700) {
+  pros::delay(10);
+}
+setIntake(-1);
+pros::delay(1000);
+setLift(0);
+setIntake(1);
+pros::delay(1000);
+chassisControl->setMaxVelocity(110);
+chassisControl->moveDistance(3.5_ft);
+chassisControl->setMaxVelocity(150);
+chassisControl->moveDistance(-1.60_ft);
+chassisControl->turnAngle((blue ? -1 : 1) * 135_deg);
+setChassis(0.75);
+pros::delay(1000);
+setChassis(0);
+setIntake(0);
+chassisControl->moveDistance(-0.15_ft);
+setTilterVelocity(1);
+while (tilterMtr.getPosition() < 2000) {
+  pros::delay(10);
+}
+setTilterVelocity(0.4);
+while (tilterMtr.getPosition() < 4500) {
+  pros::delay(10);
+}
+setTilterVelocity(0);
+chassisControl->moveDistance(-1.35_ft);
+tilterMtr.moveAbsolute(0, 100);
+}
+
 }

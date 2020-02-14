@@ -3,9 +3,9 @@
 #include "main.h"
 
 // Some constant powers to use
-const float tilterOutSlowVelocity = 1.5;
-const float tilterOutFastVelocity = 2;
-const float tilterInVelocity = 0.75;
+const float tilterOutSlowVelocity = 1;
+const float tilterOutFastVelocity = 1;
+const float tilterInVelocity = 1;
 const float tilterOutPower = 1;
 const float tilterInPower = 0.5;
 const long tilterInPos = 0;

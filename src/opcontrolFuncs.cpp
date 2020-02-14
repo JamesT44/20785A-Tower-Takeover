@@ -7,6 +7,7 @@
 okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::up);
 okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::down);
 okapi::ControllerButton backwardBtn(okapi::ControllerDigital::left);
+okapi::ControllerButton backOuttakeBtn(okapi::ControllerDigital::right);
 
 okapi::ControllerButton liftUpBtn(okapi::ControllerDigital::L1);
 okapi::ControllerButton liftDownBtn(okapi::ControllerDigital::L2);
@@ -20,6 +21,8 @@ void chassisOpcontrolTask(void *ignore) {
   std::uint32_t prev_time = pros::millis();
   while (true) {
     if (backwardBtn.isPressed()) {
+      setChassis(-0.25);
+    } else if (backOuttakeBtn.isPressed()) {
       setChassis(-0.25);
     } else {
       setChassis(
@@ -92,7 +95,9 @@ void tilterOpcontrol() {
 }
 
 void intakeOpcontrol() {
-  if (intakeBtn.isPressed()) {
+  if (backOuttakeBtn.isPressed()) {
+    setIntake(-0.5);
+  } else if (intakeBtn.isPressed()) {
     setIntake(intakePower);
   } else if (outtakeBtn.isPressed()) {
     if (liftPresetIndex == 1) {
