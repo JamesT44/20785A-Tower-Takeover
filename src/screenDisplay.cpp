@@ -120,32 +120,32 @@ void ScreenDisplay::updateOdom() {
   double sinTheta = sin(theta);
   double cosTheta = cos(theta);
   robotPoints[0] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   x += centreDist * sinTheta;
   y += centreDist * cosTheta;
   robotPoints[1] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   x -= robotWidth * cosTheta / 2;
   y += robotWidth * sinTheta / 2;
   robotPoints[2] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   x -= robotLength * sinTheta;
   y -= robotLength * cosTheta;
   robotPoints[3] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   x += robotWidth * cosTheta;
   y -= robotWidth * sinTheta;
   robotPoints[4] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   x += robotLength * sinTheta;
   y += robotLength * cosTheta;
   robotPoints[5] = {(short)(x * odomImgScale),
-                    (short)((1.0 - y) * odomImgScale)};
+                    (short)((12.0 - y) * odomImgScale)};
 
   robotPoints[6] = robotPoints[1];
   lv_line_set_points(robotLine, robotPoints.data(), robotPoints.size());
