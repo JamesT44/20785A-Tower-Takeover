@@ -21,6 +21,7 @@
  * restart the task, not resume it from where it left off.
  */
 void opcontrol() {
+  okapi::ControllerButton deployBtn(okapi::ControllerDigital::B);
   auto start = pros::millis();
   pros::delay(500);
 
@@ -31,13 +32,14 @@ void opcontrol() {
   // path.saveToSD("test2");
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
   pros::Task liftTask(liftOpcontrolTask, nullptr, "");
+  chassisControl->startOdomThread();
   int i = 0;
   while (true) {
     // Abstracted into functions
     tilterOpcontrol();
     intakeOpcontrol();
 
-    mainDisplay.updateAuton();
+    // mainDisplay.updateAuton();
     mainDisplay.updateOdom();
 
     if (i++ == 50) {

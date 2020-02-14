@@ -2,7 +2,7 @@
 #include "deviceConfig.h"
 
 void setChassis(double leftPower, double rightPower) {
-  robotModel->tank(leftPower, rightPower);
+  chassisControl->getModel()->tank(leftPower, rightPower);
 }
 
 void setChassis(double power) {
@@ -17,7 +17,7 @@ void setTilter(double power) {
 }
 
 void setTilterVelocity(double velocity) {
-  tilterController->setTarget(velocity * 100);
+  tilterMtr.moveVelocity(velocity * 100);
 }
 
 void setIntake(double power) {
@@ -25,5 +25,5 @@ void setIntake(double power) {
 }
 
 void setLiftTarget(double degrees) {
-  liftMtr.moveAbsolute(degrees * 5, 200.0);
+  liftMtr.moveAbsolute(degrees * 5, 100.0);
 }
