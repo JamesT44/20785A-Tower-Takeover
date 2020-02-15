@@ -2,19 +2,13 @@
 
 #include "main.h"
 
-// Some constant powers to use
-const float tilterOutSlowVelocity = 1;
-const float tilterOutFastVelocity = 1;
-const float tilterInVelocity = 1;
-const float tilterOutPower = 1;
-const float tilterInPower = 0.5;
+// Some constants to use
+const float tilterVelocity = 1;
 const long tilterInPos = 0;
 const long tilterOutPos = 1300;
 const float liftPower = 1;
 const float intakePower = 1;
 const float slowIntakePower = 1;
-static bool liftManual = false;
-static long tilterPrevPos = 0;
 
 const long liftPresets[] = {0, 1500, 1900};
 const size_t liftPresetNum = sizeof(liftPresets) / sizeof(liftPresets[0]);

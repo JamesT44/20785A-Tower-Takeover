@@ -29,10 +29,11 @@ void autonomous() {
     pros::delay(10);
   }
   setIntake(-1);
-  pros::delay(1000);
+  pros::delay(600); // Changed from 1000ms
   setLift(0);
+  pros::delay(300);
   setIntake(1);
-  pros::delay(1000);
+  pros::delay(700);
   chassisControl->setMaxVelocity(110);
   chassisControl->moveDistance(3.5_ft);
   chassisControl->setMaxVelocity(150);

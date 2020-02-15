@@ -56,41 +56,26 @@ void liftOpcontrolTask(void *ignore) {
       setIntake(1);
     } else if (liftUpBtn.changedToReleased()) {
       if (liftPresetIndex < liftPresetNum - 1) {
-        // tilterPrevPos = tilterMtr.getPosition();
-        // if (liftPresetIndex == 0) {
-        //   tilterMtr.moveAbsolute(tilterOutPos, 100);
-        // }
         liftPresetIndex += 1;
         setLift(liftPresets[liftPresetIndex]);
       }
     } else if (liftDownBtn.changedToReleased()) {
       if (liftPresetIndex > 0) {
         liftPresetIndex -= 1;
-        // if (liftPresetIndex == 0) {
-        //   tilterMtr.moveAbsolute(tilterPrevPos, 100);
-        // }
         setLift(liftPresets[liftPresetIndex]);
       }
     }
-
     pros::delay(10);
   }
 }
 
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
-    liftManual = true;
-    if (tilterMtr.getPosition() > 2000) {
-      setTilterVelocity(tilterOutSlowVelocity);
-    } else {
-      setTilterVelocity(tilterOutFastVelocity);
-    }
+    setTilterVelocity(tilterVelocity);
   } else if (tiltInBtn.isPressed()) {
-    liftManual = true;
-    setTilterVelocity(-tilterInVelocity);
-  } else if (liftManual) {
+    setTilterVelocity(-tilterVelocity);
+  } else {
     setTilterVelocity(0);
-    liftManual = false;
   }
 }
 
