@@ -38,22 +38,21 @@ void liftOpcontrolTask(void *ignore) {
   setLift(liftPresets[liftPresetIndex]);
   while (true) {
     if (deployBtn.isPressed()) {
-      tilterMtr.moveAbsolute(1600, 200);
-      while (tilterMtr.getPosition() < 1350) {
+      tilterMtr.moveAbsolute(3250, 100);
+      while (tilterMtr.getPosition() < 3000) {
+        pros::delay(10);
+      }
+      setLift(1900);
+      tilterMtr.moveAbsolute(1500, 100);
+      while (tilterMtr.getPosition() > 1750) {
+        pros::delay(10);
+      }
+      while (liftMtr.getPosition() < 1600) {
         pros::delay(10);
       }
       setIntake(-1);
-      pros::delay(500);
-      setLift(1900);
-      while (liftMtr.getPosition() < 1800) {
-        pros::delay(10);
-      }
-      tilterMtr.moveAbsolute(300, 200);
-      while (tilterMtr.getPosition() > 600) {
-        pros::delay(10);
-      }
+      pros::delay(1000);
       setLift(0);
-      setIntake(1);
     } else if (liftUpBtn.changedToReleased()) {
       if (liftPresetIndex < liftPresetNum - 1) {
         liftPresetIndex += 1;
@@ -71,7 +70,11 @@ void liftOpcontrolTask(void *ignore) {
 
 void tilterOpcontrol() {
   if (tiltOutBtn.isPressed()) {
-    setTilterVelocity(tilterVelocity);
+    if (tilterMtr.getPosition() > 7000) {
+      setTilterVelocity(0.75);
+    } else {
+      setTilterVelocity(tilterVelocity);
+    }
   } else if (tiltInBtn.isPressed()) {
     setTilterVelocity(-tilterVelocity);
   } else {
@@ -94,6 +97,6 @@ void intakeOpcontrol() {
     setIntake(0);
   }
   if (deployBtn.isPressed()) {
-    pros::delay(1500);
+    pros::delay(3000);
   }
 }
