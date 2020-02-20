@@ -1,7 +1,6 @@
 #include "opcontrolFuncs.h"
 #include "basicFuncs.h"
 #include "deviceConfig.h"
-#include "purePursuit.h"
 
 // Named buttons
 okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::up);
@@ -15,7 +14,8 @@ okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 
 okapi::ControllerButton deployBtn(okapi::ControllerDigital::B);
-okapi::ControllerButton odomTestBtn(okapi::ControllerDigital::Y);
+okapi::ControllerButton odomFwdBtn(okapi::ControllerDigital::X);
+okapi::ControllerButton odomBwdBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrolTask(void *ignore) {
   std::uint32_t prev_time = pros::millis();
@@ -28,6 +28,21 @@ void chassisOpcontrolTask(void *ignore) {
       setChassis(
         mainController.getAnalog(okapi::ControllerAnalog::leftY),
         mainController.getAnalog(okapi::ControllerAnalog::rightY));
+    }
+
+    if (odomFwdBtn.changedToPressed()) {
+      chassisControl->moveDistance(4_ft);
+      while (!chassisControl->isTurnSettled()) {
+        pros::delay(10);
+      }
+      std::cout << "done\n";
+    }
+
+    if (odomBwdBtn.changedToPressed()) {
+      chassisControl->turnAngle(180_deg);
+      while (!chassisControl->isTurnSettled()) {
+        pros::delay(10);
+      }
     }
 
     pros::delay(10);

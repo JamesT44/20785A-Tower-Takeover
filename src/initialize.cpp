@@ -1,7 +1,8 @@
-#include "customOdometry.h"
 #include "deviceConfig.h"
+#include "lib7842/api.hpp"
 #include "main.h"
-#include "purePursuit.h"
+
+using namespace lib7842;
 
 okapi::Controller mainController(okapi::ControllerId::master);
 
@@ -10,9 +11,6 @@ okapi::Motor tilterMtr =
                false,
                okapi::AbstractMotor::gearset::red,
                okapi::AbstractMotor::encoderUnits::counts);
-
-// std::shared_ptr<okapi::AsyncVelIntegratedController> tilterController =
-//   okapi::AsyncVelControllerBuilder().withMotor(tilterMtr).build();
 
 okapi::Motor liftMtr =
   okapi::Motor(9,
@@ -30,12 +28,12 @@ std::shared_ptr<okapi::MotorGroup> intakeMtrs =
   std::make_shared<okapi::MotorGroup>(
     std::initializer_list<okapi::Motor>({6, -7}));
 
-std::shared_ptr<okapi::ADIEncoder> LEnc =
-  std::make_shared<okapi::ADIEncoder>(7, 8);
-std::shared_ptr<okapi::ADIEncoder> REnc =
-  std::make_shared<okapi::ADIEncoder>(1, 2, true);
-std::shared_ptr<okapi::ADIEncoder> MEnc =
-  std::make_shared<okapi::ADIEncoder>(3, 4);
+// std::shared_ptr<okapi::ADIEncoder> LEnc =
+//   std::make_shared<okapi::ADIEncoder>(7, 8);
+// std::shared_ptr<okapi::ADIEncoder> REnc =
+//   std::make_shared<okapi::ADIEncoder>(1, 2, true);
+// std::shared_ptr<okapi::ADIEncoder> MEnc =
+//   std::make_shared<okapi::ADIEncoder>(3, 4);
 
 okapi::ChassisScales chassisScale =
   okapi::ChassisScales({4.157_in, 11.15_in}, okapi::imev5GreenTPR);
@@ -44,54 +42,57 @@ okapi::ChassisScales odomScale =
                        okapi::quadEncoderTPR);
 
 std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
-  std::make_shared<okapi::ThreeEncoderSkidSteerModel>(chassisLMtrs,
-                                                      chassisRMtrs,
-                                                      LEnc,
-                                                      REnc,
-                                                      MEnc,
-                                                      200,
-                                                      12000);
+  std::make_shared<okapi::ThreeEncoderSkidSteerModel>(
+    chassisLMtrs,
+    chassisRMtrs,
+    std::make_shared<ADIEncoder>(7, 8),
+    std::make_shared<ADIEncoder>(1, 2, true),
+    std::make_shared<ADIEncoder>(3, 4),
+    200,
+    12000);
 
-std::unique_ptr<CustomOdometry> robotOdometry =
-  std::make_unique<CustomOdometry>(okapi::TimeUtilFactory().create(),
-                                   robotModel,
-                                   odomScale);
+std::shared_ptr<CustomOdometry> robotOdometry =
+  std::make_shared<CustomOdometry>(robotModel,
+                                   odomScale,
+                                   TimeUtilFactory().create());
 
-// auto cci = std::make_shared<okapi::ChassisControllerIntegrated>(
-//   okapi::TimeUtilFactory().create(),
-//   robotModel,
-//   std::make_unique<okapi::AsyncPosIntegratedController>(
-//     chassisLMtrs,
-//     okapi::AbstractMotor::gearset::green,
-//     okapi::toUnderlyingType(okapi::AbstractMotor::gearset::green),
-//     okapi::TimeUtilFactory().create(),
-//     okapi::Logger::getDefaultLogger()),
-//   std::make_unique<okapi::AsyncPosIntegratedController>(
-//     chassisRMtrs,
-//     okapi::AbstractMotor::gearset::green,
-//     okapi::toUnderlyingType(okapi::AbstractMotor::gearset::green),
-//     okapi::TimeUtilFactory().create(),
-//     okapi::Logger::getDefaultLogger()),
-//   okapi::AbstractMotor::gearset::green,
-//   chassisScale);
-//
-// std::shared_ptr<okapi::OdomChassisController> chassisControl =
-//   std::make_shared<okapi::DefaultOdomChassisController>(
-//     okapi::TimeUtilFactory().create(),
-//     std::move(robotOdometry),
-//     cci);
+std::shared_ptr<OdomController> chassisControl =
+  std::make_shared<OdomController>(
+    robotModel,
+    robotOdometry,
+    // Distance PID - To mm
+    std::make_unique<IterativePosPIDController>(
+      0.012,
+      0.0000,
+      0.0002,
+      0,
+      TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+    // Turn PID - To Degree
+    std::make_unique<IterativePosPIDController>(
+      0.1,
+      0.00,
+      0.004,
+      0,
+      TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+    // Angle PID - To Degree
+    std::make_unique<IterativePosPIDController>(
+      0.02,
+      0,
+      0,
+      0,
+      TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
+    1_ft,
+    TimeUtilFactory().create());
 
-std::shared_ptr<okapi::OdomChassisController> chassisControl =
-  okapi::ChassisControllerBuilder()
-    .withMotors(chassisLMtrs, chassisRMtrs)
-    .withDimensions(okapi::AbstractMotor::gearset::green, chassisScale)
-    .withSensors(LEnc, REnc, MEnc)
-    .withOdometry(std::move(robotOdometry), okapi::StateMode::CARTESIAN)
-    .buildOdometry();
+PathFollower follower(robotModel,
+                      robotOdometry,
+                      chassisScale,
+                      1_ft,
+                      TimeUtilFactory().create());
+PursuitLimits limits{0.2_mps, 1.1_mps2, 0.75_mps, 1.1_mps2, 0_mps, 40_mps};
 
-ScreenDisplay mainDisplay(lv_scr_act(), chassisControl);
+ScreenDisplay mainDisplay(lv_scr_act(), robotOdometry);
 
-// PurePursuit pursuit = PurePursuit(chassisControl, 1.1_ft);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -99,7 +100,7 @@ ScreenDisplay mainDisplay(lv_scr_act(), chassisControl);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  // chassisControl->startOdomThread();
+  robotOdometry->startTask("Odometry");
   intakeMtrs->setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   tilterMtr.tarePosition();
   liftMtr.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);

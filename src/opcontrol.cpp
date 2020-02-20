@@ -3,9 +3,7 @@
 #include "opcontrolFuncs.h"
 #include "pros/apix.h"
 #include "pros/rtos.hpp"
-#include "purePursuit.h"
 #include "screenDisplay.h"
-#include "trajectory2D.h"
 
 /**
  * Runs the operator control code. This function will be started in its own
@@ -21,8 +19,7 @@
  * restart the task, not resume it from where it left off.
  */
 void opcontrol() {
-  okapi::ControllerButton deployBtn(okapi::ControllerDigital::B);
-  auto start = pros::millis();
+  // auto start = pros::millis();
   pros::delay(500);
 
   // auto path = Trajectory2D();
@@ -32,7 +29,6 @@ void opcontrol() {
   // path.saveToSD("test2");
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
   pros::Task liftTask(liftOpcontrolTask, nullptr, "");
-  chassisControl->startOdomThread();
   int i = 0;
   while (true) {
     // Abstracted into functions

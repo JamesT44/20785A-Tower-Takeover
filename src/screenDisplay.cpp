@@ -2,9 +2,11 @@
 #include "deviceConfig.h"
 #include "main.h"
 
+using namespace lib7842;
+
 ScreenDisplay::ScreenDisplay(
   lv_obj_t *parent,
-  const std::shared_ptr<okapi::OdomChassisController> &robotOdom)
+  const std::shared_ptr<CustomOdometry> &robotOdom)
   : tabview(lv_tabview_create(parent, NULL)), robotController(robotOdom) {
   lv_tabview_set_btns_hidden(tabview, true);
 
@@ -100,7 +102,7 @@ void ScreenDisplay::updateOdom() {
   // Get values of variables to be displayed
   std::valarray<std::int32_t> encValues =
     robotController->getModel()->getSensorVals();
-  okapi::OdomState state = robotController->getState();
+  lib7842::State state = robotOdometry->getState();
 
   double x = state.x.convert(okapi::foot);
   double y = state.y.convert(okapi::foot);
@@ -151,27 +153,24 @@ void ScreenDisplay::updateOdom() {
   lv_line_set_points(robotLine, robotPoints.data(), robotPoints.size());
 }
 
-std::shared_ptr<okapi::OdomChassisController>
-ScreenDisplay::getRobotController() {
+std::shared_ptr<CustomOdometry> ScreenDisplay::getRobotController() {
   return robotController;
 }
 
 lv_res_t odomBtnmCallback(lv_obj_t *btnm, const char *text) {
-  okapi::OdomState state = chassisControl->getState();
+  lib7842::State state = chassisControl->getState();
 
   if (strcmp(text, "Reset") == 0) {
-    chassisControl->getModel()->resetSensors();
-    pros::delay(20);
-    chassisControl->setState({0_ft, 0_ft, 0_deg});
+    robotOdometry->reset();
   } else if (strcmp(text, "X+") == 0) {
     state.x += 2_ft;
-    chassisControl->setState(state);
+    robotOdometry->setState(state);
   } else if (strcmp(text, "Y+") == 0) {
     state.y += 2_ft;
-    chassisControl->setState(state);
+    robotOdometry->setState(state);
   } else if (strcmp(text, "Turn") == 0) {
     state.theta += 90_deg;
-    chassisControl->setState(state);
+    robotOdometry->setState(state);
   }
   return LV_RES_OK;
 }

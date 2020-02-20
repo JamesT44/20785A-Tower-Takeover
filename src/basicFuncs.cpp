@@ -2,7 +2,7 @@
 #include "deviceConfig.h"
 
 void setChassis(double leftPower, double rightPower) {
-  chassisControl->getModel()->tank(leftPower, rightPower);
+  robotModel->tank(leftPower, rightPower);
 }
 
 void setChassis(double power) {

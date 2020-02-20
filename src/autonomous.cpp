@@ -1,3 +1,4 @@
+#include "autonFuncs.h"
 #include "basicFuncs.h"
 #include "deviceConfig.h"
 #include "main.h"
@@ -14,61 +15,12 @@
  * re-start it from where it left off.
  */
 void autonomous() {
-  bool blue = true;
-  chassisControl->setMaxVelocity(130);
-  tilterMtr.moveAbsolute(3250, 100);
-  while (tilterMtr.getPosition() < 3000) {
-    pros::delay(10);
-  }
-  setLift(1900);
-  tilterMtr.moveAbsolute(1500, 100);
-  while (tilterMtr.getPosition() > 1750) {
-    pros::delay(10);
-  }
-  while (liftMtr.getPosition() < 1600) {
-    pros::delay(10);
-  }
-  setIntake(-1);
-  pros::delay(1000);
-  setLift(0);
-  setIntake(1);
-  pros::delay(1000);
-  chassisControl->setMaxVelocity(110);
-  chassisControl->moveDistance(3.25_ft);
-  chassisControl->setMaxVelocity(200);
-  if (blue) {
-    chassisControl->turnAngle((blue ? -1 : 1) * -33_deg);
-  } else {
-    chassisControl->turnAngle((blue ? -1 : 1) * -35_deg);
-  }
-  chassisControl->moveDistance(0.5_ft);
-  chassisControl->moveDistance(-1.5_ft);
-  if (blue) {
-    chassisControl->turnAngle((blue ? -1 : 1) * -180_deg);
-  } else {
-    chassisControl->turnAngle((blue ? -1 : 1) * -171_deg);
-  }
-  setIntake(0);
-  // chassisControl->moveDistanceAsync(blue ? 0.9_ft : 0.97_ft);
-  setChassis(0.8);
-  setIntake(-0.5);
-  pros::delay(200);
-  setIntake(0);
-  pros::delay(550);
-  setChassis(0);
-  setIntake(0);
-  tilterMtr.moveVoltage(12000);
-  while (tilterMtr.getPosition() < 7500) {
-    pros::delay(10);
-  }
-  tilterMtr.moveVoltage(10000);
-  while (tilterMtr.getPosition() < 9500) {
-    pros::delay(10);
-  }
-  tilterMtr.moveVoltage(0);
-  chassisControl->moveDistance(-1.35_ft);
-  tilterMtr.moveAbsolute(0, 100);
-  // Practice interview
-  // Remove drive back
-  // Change settledutil parameters
+  // deployRobot();
+  intakeFiveCubes();
+  setIntake(0.75);
+  chassisControl->turnAngle(-45_deg, chassisControl->rightPivot);
+  robotModel->setMaxVoltage(12000);
+  chassisControl->moveDistance(-1_ft);
+  chassisControl->turnToPoint({16_in, 8_in});
+  chassisControl->driveToPoint({16_in, 8_in});
 }

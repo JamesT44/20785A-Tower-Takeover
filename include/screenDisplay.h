@@ -1,7 +1,9 @@
 #pragma once
 
-#include "customOdometry.h"
+#include "lib7842/api.hpp"
 #include "main.h"
+
+using namespace lib7842;
 
 LV_IMG_DECLARE(auton_blue_1pt);
 LV_IMG_DECLARE(auton_red_1pt);
@@ -46,9 +48,8 @@ class ScreenDisplay {
    * @param robotOdom the odomChassisController instance to use for the
    * odomTab
    */
-  ScreenDisplay(
-    lv_obj_t *parent,
-    const std::shared_ptr<okapi::OdomChassisController> &robotOdom);
+  ScreenDisplay(lv_obj_t *parent,
+                const std::shared_ptr<CustomOdometry> &robotOdom);
 
   ~ScreenDisplay();
 
@@ -71,7 +72,7 @@ class ScreenDisplay {
   /**
    * @return The internal OdomChassisController
    */
-  std::shared_ptr<okapi::OdomChassisController> getRobotController();
+  std::shared_ptr<CustomOdometry> getRobotController();
 
   protected:
   lv_obj_t *allianceSw;
@@ -80,7 +81,7 @@ class ScreenDisplay {
   lv_style_t style_sw_blue;
   lv_style_t style_sw_red;
 
-  std::shared_ptr<okapi::OdomChassisController> robotController{nullptr};
+  std::shared_ptr<CustomOdometry> robotController{nullptr};
   lv_obj_t *tabview;
   lv_obj_t *odomStatusLabel;
   lv_obj_t *robotLine;
