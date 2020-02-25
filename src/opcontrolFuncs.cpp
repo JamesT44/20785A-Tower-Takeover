@@ -58,31 +58,27 @@ void liftOpcontrol() {
   }
 }
 
-void tilterOpcontrol() {
-  if (deployBtn.changedToReleased()) {
-    tilterMtr.moveAbsolute(3250, 100);
-    while (tilterMtr.getPosition() < 3000) {
-      pros::delay(10);
+void tilterOpcontrolTask(void *ignore) {
+  trayAutoIn = true;
+  tilterMtr.moveAbsolute(1800, 100);
+  while (true) {
+    if (tiltOutBtn.isPressed()) {
+      if (tilterMtr.getPosition() > 6000) {
+        setTilterVelocity(0.75);
+      } else {
+        setTilterVelocity(tilterVelocity);
+      }
+      trayAutoIn = false;
+    } else if (tiltInBtn.isPressed()) {
+      setTilterVelocity(-tilterVelocity);
+      trayAutoIn = false;
+    } else if (tiltAutoInBtn.changedToReleased()) {
+      trayAutoIn = true;
+      tilterMtr.moveAbsolute(1800, 100);
+    } else if (!trayAutoIn) {
+      setTilterVelocity(0);
     }
-    trayAutoIn = true;
-    tilterMtr.moveAbsolute(1800, 100);
-  }
-
-  if (tiltOutBtn.isPressed()) {
-    if (tilterMtr.getPosition() > 6000) {
-      setTilterVelocity(0.75);
-    } else {
-      setTilterVelocity(tilterVelocity);
-    }
-    trayAutoIn = false;
-  } else if (tiltInBtn.isPressed()) {
-    setTilterVelocity(-tilterVelocity);
-    trayAutoIn = false;
-  } else if (tiltAutoInBtn.changedToReleased()) {
-    trayAutoIn = true;
-    tilterMtr.moveAbsolute(1800, 100);
-  } else if (!trayAutoIn) {
-    setTilterVelocity(0);
+    pros::delay(10);
   }
 }
 

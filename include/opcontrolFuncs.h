@@ -17,5 +17,5 @@ static bool trayAutoIn = false;
 
 void chassisOpcontrolTask(void *ignore);
 void liftOpcontrol();
-void tilterOpcontrol();
+void tilterOpcontrolTask(void *ignore);
 void intakeOpcontrol();

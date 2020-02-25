@@ -1,3 +1,4 @@
+#include "autonFuncs.h"
 #include "deviceConfig.h"
 #include "main.h"
 #include "opcontrolFuncs.h"
@@ -27,11 +28,13 @@ void opcontrol() {
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
+  deployRobot(true);
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
+  pros::Task tilterTask(tilterOpcontrolTask, nullptr, "");
+
   int i = 0;
   while (true) {
     // Abstracted into functions
-    tilterOpcontrol();
     liftOpcontrol();
     intakeOpcontrol();
 
