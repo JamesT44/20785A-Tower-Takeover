@@ -15,15 +15,27 @@
  * re-start it from where it left off.
  */
 void autonomous() {
-  deployRobot(true);
+  // deployRobot(true);
   intakeFiveCubes();
   setIntake(0.75);
   chassisControl->turnAngle(-45_deg, chassisControl->rightPivot);
   robotModel->setMaxVoltage(12000);
   chassisControl->moveDistance(-0.5_ft);
+  std::cout << chassisControl->getState().x.convert(okapi::foot) << " "
+            << chassisControl->getState().y.convert(okapi::foot) << " "
+            << chassisControl->getState().theta.convert(okapi::degree)
+            << "\n";
   chassisControl->turnAngle(-137_deg);
+  std::cout << chassisControl->getState().x.convert(okapi::foot) << " "
+            << chassisControl->getState().y.convert(okapi::foot) << " "
+            << chassisControl->getState().theta.convert(okapi::degree)
+            << "\n";
   chassisControl->moveDistance(1.5_ft);
-  chassisControl->turnAngle(-47_deg);
+  std::cout << chassisControl->getState().x.convert(okapi::foot) << " "
+            << chassisControl->getState().y.convert(okapi::foot) << " "
+            << chassisControl->getState().theta.convert(okapi::degree)
+            << "\n";
+  // chassisControl->turnAngle(-44_deg);
   setIntake(0);
   robotModel->forward(0.8);
   setIntake(-0.5);

@@ -71,7 +71,7 @@ std::shared_ptr<OdomController> chassisControl =
     // 1, 0.1, 0.01
     std::make_unique<IterativePosPIDController>(
       0.08,
-      0.0001,
+      0.01,
       0.004,
       0,
       TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),

@@ -60,10 +60,6 @@ void liftOpcontrol() {
 
 void tilterOpcontrol() {
   if (deployBtn.changedToReleased()) {
-    tilterMtr.moveAbsolute(3250, 100);
-    while (tilterMtr.getPosition() < 3000) {
-      pros::delay(10);
-    }
     trayAutoIn = true;
     tilterMtr.moveAbsolute(1800, 100);
   }
