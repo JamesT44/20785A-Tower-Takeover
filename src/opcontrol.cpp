@@ -21,15 +21,14 @@
  */
 void opcontrol() {
   // auto start = pros::millis();
-  pros::delay(500);
 
   // auto path = Trajectory2D();
   // auto res = path.loadFromSD("test");
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
-  deployRobot(true);
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
+  deployRobot(true);
   pros::Task tilterTask(tilterOpcontrolTask, nullptr, "");
 
   int i = 0;
