@@ -21,14 +21,14 @@
  */
 void opcontrol() {
   // auto start = pros::millis();
-  pros::delay(500);
+  // pros::delay(500);
 
   // auto path = Trajectory2D();
   // auto res = path.loadFromSD("test");
   // std::cout << "res: " << (int)res << std::endl;
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
-  deployRobot(true);
+  // deployRobot(true);
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
   pros::Task tilterTask(tilterOpcontrolTask, nullptr, "");
 
@@ -38,7 +38,7 @@ void opcontrol() {
     liftOpcontrol();
     intakeOpcontrol();
 
-    // mainDisplay.updateAuton();
+    mainDisplay.updateAuton();
     mainDisplay.updateOdom();
 
     if (i++ == 50) {
