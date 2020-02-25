@@ -1,10 +1,12 @@
 #include "opcontrolFuncs.h"
+#include "autonFuncs.h"
 #include "basicFuncs.h"
 #include "deviceConfig.h"
 
 // Named buttons
 okapi::ControllerButton tiltOutBtn(okapi::ControllerDigital::up);
 okapi::ControllerButton tiltInBtn(okapi::ControllerDigital::down);
+okapi::ControllerButton tiltAutoInBtn(okapi::ControllerDigital::X);
 okapi::ControllerButton backwardBtn(okapi::ControllerDigital::left);
 okapi::ControllerButton backOuttakeBtn(okapi::ControllerDigital::right);
 
@@ -14,7 +16,6 @@ okapi::ControllerButton intakeBtn(okapi::ControllerDigital::R1);
 okapi::ControllerButton outtakeBtn(okapi::ControllerDigital::R2);
 
 okapi::ControllerButton deployBtn(okapi::ControllerDigital::B);
-okapi::ControllerButton odomFwdBtn(okapi::ControllerDigital::X);
 okapi::ControllerButton odomBwdBtn(okapi::ControllerDigital::Y);
 
 void chassisOpcontrolTask(void *ignore) {
@@ -30,14 +31,6 @@ void chassisOpcontrolTask(void *ignore) {
         mainController.getAnalog(okapi::ControllerAnalog::rightY));
     }
 
-    if (odomFwdBtn.changedToPressed()) {
-      chassisControl->moveDistance(4_ft);
-      while (!chassisControl->isTurnSettled()) {
-        pros::delay(10);
-      }
-      std::cout << "done\n";
-    }
-
     if (odomBwdBtn.changedToPressed()) {
       chassisControl->turnAngle(180_deg);
       while (!chassisControl->isTurnSettled()) {
@@ -49,50 +42,46 @@ void chassisOpcontrolTask(void *ignore) {
   }
 }
 
-void liftOpcontrolTask(void *ignore) {
-  setLift(liftPresets[liftPresetIndex]);
-  while (true) {
-    if (deployBtn.isPressed()) {
-      tilterMtr.moveAbsolute(3250, 100);
-      while (tilterMtr.getPosition() < 3000) {
-        pros::delay(10);
-      }
-      setLift(1900);
-      tilterMtr.moveAbsolute(1500, 100);
-      while (tilterMtr.getPosition() > 1750) {
-        pros::delay(10);
-      }
-      while (liftMtr.getPosition() < 1600) {
-        pros::delay(10);
-      }
-      setIntake(-1);
-      pros::delay(1000);
-      setLift(0);
-    } else if (liftUpBtn.changedToReleased()) {
-      if (liftPresetIndex < liftPresetNum - 1) {
-        liftPresetIndex += 1;
-        setLift(liftPresets[liftPresetIndex]);
-      }
-    } else if (liftDownBtn.changedToReleased()) {
-      if (liftPresetIndex > 0) {
-        liftPresetIndex -= 1;
-        setLift(liftPresets[liftPresetIndex]);
-      }
+void liftOpcontrol() {
+  if (deployBtn.isPressed()) {
+    deployRobot(true);
+  } else if (liftUpBtn.changedToReleased()) {
+    if (liftPresetIndex < liftPresetNum - 1) {
+      liftPresetIndex += 1;
+      setLift(liftPresets[liftPresetIndex]);
     }
-    pros::delay(10);
+  } else if (liftDownBtn.changedToReleased()) {
+    if (liftPresetIndex > 0) {
+      liftPresetIndex -= 1;
+      setLift(liftPresets[liftPresetIndex]);
+    }
   }
 }
 
 void tilterOpcontrol() {
+  if (deployBtn.changedToReleased()) {
+    tilterMtr.moveAbsolute(3250, 100);
+    while (tilterMtr.getPosition() < 3000) {
+      pros::delay(10);
+    }
+    trayAutoIn = true;
+    tilterMtr.moveAbsolute(1800, 100);
+  }
+
   if (tiltOutBtn.isPressed()) {
-    if (tilterMtr.getPosition() > 7000) {
+    if (tilterMtr.getPosition() > 6000) {
       setTilterVelocity(0.75);
     } else {
       setTilterVelocity(tilterVelocity);
     }
+    trayAutoIn = false;
   } else if (tiltInBtn.isPressed()) {
     setTilterVelocity(-tilterVelocity);
-  } else {
+    trayAutoIn = false;
+  } else if (tiltAutoInBtn.changedToReleased()) {
+    trayAutoIn = true;
+    tilterMtr.moveAbsolute(1800, 100);
+  } else if (!trayAutoIn) {
     setTilterVelocity(0);
   }
 }

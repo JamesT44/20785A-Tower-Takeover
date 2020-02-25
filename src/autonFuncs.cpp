@@ -2,7 +2,7 @@
 #include "basicFuncs.h"
 #include "deviceConfig.h"
 
-void deployRobot() {
+void deployRobot(bool intakeOn) {
   setLift(1900);
   while (liftMtr.getPosition() < 1500) {
     pros::delay(10);
@@ -10,7 +10,7 @@ void deployRobot() {
   setIntake(-1);
   pros::delay(1000);
   setLift(0);
-  setIntake(1);
+  setIntake(intakeOn ? 1 : 0);
   while (liftMtr.getPosition() > 300) {
     pros::delay(10);
   }
@@ -18,6 +18,6 @@ void deployRobot() {
 
 void intakeFiveCubes() {
   setIntake(1);
-  robotModel->setMaxVoltage(8000);
+  robotModel->setMaxVoltage(7000);
   chassisControl->moveDistance(3.05_ft);
 }

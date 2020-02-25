@@ -38,7 +38,7 @@ std::shared_ptr<okapi::MotorGroup> intakeMtrs =
 okapi::ChassisScales chassisScale =
   okapi::ChassisScales({4.157_in, 11.15_in}, okapi::imev5GreenTPR);
 okapi::ChassisScales odomScale =
-  okapi::ChassisScales({2.8193_in, 4.549_in, 4.5_in},
+  okapi::ChassisScales({2.8193_in, 4.55_in, 4.5_in},
                        okapi::quadEncoderTPR);
 
 std::shared_ptr<okapi::ThreeEncoderSkidSteerModel> robotModel =
@@ -68,9 +68,10 @@ std::shared_ptr<OdomController> chassisControl =
       0,
       TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     // Turn PID - To Degree
+    // 1, 0.1, 0.01
     std::make_unique<IterativePosPIDController>(
-      0.1,
-      0.00,
+      0.08,
+      0.0001,
       0.004,
       0,
       TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),

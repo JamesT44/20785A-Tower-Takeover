@@ -28,11 +28,11 @@ void opcontrol() {
   // std::cout << "elapsed: " << pros::millis() - start << std::endl;
   // path.saveToSD("test2");
   pros::Task chassisTask(chassisOpcontrolTask, nullptr, "");
-  pros::Task liftTask(liftOpcontrolTask, nullptr, "");
   int i = 0;
   while (true) {
     // Abstracted into functions
     tilterOpcontrol();
+    liftOpcontrol();
     intakeOpcontrol();
 
     // mainDisplay.updateAuton();

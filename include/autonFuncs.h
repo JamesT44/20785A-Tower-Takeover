@@ -2,5 +2,5 @@
 
 #include "main.h"
 
-void deployRobot();
+void deployRobot(bool intakeOn);
 void intakeFiveCubes();
