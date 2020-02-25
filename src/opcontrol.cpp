@@ -20,7 +20,7 @@
  */
 void opcontrol() {
   // auto start = pros::millis();
-  pros::delay(500);
+  // pros::delay(500);
 
   // auto path = Trajectory2D();
   // auto res = path.loadFromSD("test");
