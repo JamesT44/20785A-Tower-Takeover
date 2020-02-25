@@ -44,7 +44,7 @@ void chassisOpcontrolTask(void *ignore) {
 
 void liftOpcontrol() {
   if (deployBtn.isPressed()) {
-    deployRobot(true);
+    deployRobot();
   } else if (liftUpBtn.changedToReleased()) {
     if (liftPresetIndex < liftPresetNum - 1) {
       liftPresetIndex += 1;

@@ -2,7 +2,7 @@
 #include "basicFuncs.h"
 #include "deviceConfig.h"
 
-void deployRobot(bool intakeOn) {
+void deployRobot() {
   tilterMtr.moveAbsolute(4000, 100);
   setLift(1900);
   while (liftMtr.getPosition() < 1500) {
@@ -11,7 +11,7 @@ void deployRobot(bool intakeOn) {
   setIntake(-1);
   pros::delay(1000);
   setLift(0);
-  setIntake(intakeOn ? 1 : 0);
+  setIntake(1);
   while (liftMtr.getPosition() > 300) {
     pros::delay(10);
   }
