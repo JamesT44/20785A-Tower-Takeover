@@ -24,7 +24,7 @@ class CustomOdometry : public okapi::Odometry {
     const std::shared_ptr<okapi::Logger> &ilogger =
       okapi::Logger::getDefaultLogger());
 
-  virtual ~CustomOdometry() = default;
+  ~CustomOdometry() = default;
 
   /**
    * Sets the chassis parameters.
@@ -86,7 +86,7 @@ class CustomOdometry : public okapi::Odometry {
    * step.
    * @return The newly computed OdomState.
    */
-  virtual okapi::OdomState
+  okapi::OdomState
   odomMathStep(const std::valarray<std::int32_t> &itickDiff,
                const okapi::QTime &ideltaT);
 };
