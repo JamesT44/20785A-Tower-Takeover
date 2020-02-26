@@ -61,9 +61,9 @@ void liftOpcontrol() {
 void tilterOpcontrol() {
   if (deployBtn.changedToReleased()) {
     trayAutoIn = true;
-    tilterMtr.moveAbsolute(1800, 100);
+    prevAutoTime = pros::millis();
+    setTilterVelocity(-tilterVelocity);
   }
-
   if (tiltOutBtn.isPressed()) {
     if (tilterMtr.getPosition() > 6000) {
       setTilterVelocity(0.75);
@@ -76,8 +76,15 @@ void tilterOpcontrol() {
     trayAutoIn = false;
   } else if (tiltAutoInBtn.changedToReleased()) {
     trayAutoIn = true;
-    tilterMtr.moveAbsolute(1800, 100);
-  } else if (!trayAutoIn) {
+    prevAutoTime = pros::millis();
+    setTilterVelocity(-1);
+  } else if (trayAutoIn) {
+    if (tilterMtr.getActualVelocity() < 1 &&
+        pros::millis() - prevAutoTime > 500) {
+      setTilterVelocity(0);
+      trayAutoIn = false;
+    }
+  } else {
     setTilterVelocity(0);
   }
 }
@@ -88,8 +95,10 @@ void intakeOpcontrol() {
   } else if (intakeBtn.isPressed()) {
     setIntake(intakePower);
   } else if (outtakeBtn.isPressed()) {
-    if (liftPresetIndex == 1) {
+    if (liftPresetIndex == 2) {
       setIntake(-slowIntakePower);
+    } else if (liftPresetIndex == 1) {
+      setIntake(-0.55);
     } else {
       setIntake(-intakePower);
     }

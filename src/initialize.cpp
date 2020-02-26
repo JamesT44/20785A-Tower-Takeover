@@ -70,14 +70,14 @@ std::shared_ptr<OdomController> chassisControl =
     // Turn PID - To Degree
     // 1, 0.1, 0.01
     std::make_unique<IterativePosPIDController>(
-      0.08,
+      0.07,
       0.01,
-      0.004,
+      0.002,
       0,
-      TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+      TimeUtilFactory::withSettledUtilParams(2, 2, 300_ms)),
     // Angle PID - To Degree
     std::make_unique<IterativePosPIDController>(
-      0.02,
+      0.0,
       0,
       0,
       0,

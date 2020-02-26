@@ -9,8 +9,9 @@ void deployRobot() {
     pros::delay(10);
   }
   setIntake(-1);
-  pros::delay(1000);
+  pros::delay(700);
   setLift(0);
+  pros::delay(500);
   setIntake(1);
   while (liftMtr.getPosition() > 300) {
     pros::delay(10);

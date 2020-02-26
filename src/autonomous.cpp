@@ -21,11 +21,11 @@ void autonomous() {
   setIntake(0.75); // slow intake for swing turn
   chassisControl->turnAngle(-45_deg,
                             chassisControl->rightPivot); // swing turn
-  robotModel->setMaxVoltage(12000);      // Fast drive again
   chassisControl->moveDistance(-0.5_ft); // Back from last cube
+  robotModel->setMaxVoltage(12000);      // Fast drive again
   chassisControl->turnAngle(-137_deg);   // Turn to face near wall
   chassisControl->moveDistance(1.5_ft);  // Drive to near goal
-  chassisControl->turnAngle(-44_deg);    // Turn to goal
+  chassisControl->turnAngle(-42_deg);    // Turn to goal
   setIntake(0);                          // Stop intake
   robotModel->forward(0.8);              // Realign
   setIntake(-0.5); // Outtake slightly whilst realigning
